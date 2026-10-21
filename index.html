@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="从内容创作、视觉设计到政策解读，为下一项工作找到合适的数字员工。">
+  <meta name="theme-color" content="#f8f9fb"><title>智能体集市 · 找到合适的数字员工</title>
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="preload" href="assets/hero.jpg" as="image"><link rel="stylesheet" href="styles.css">
+  <script src="vendor/gsap.min.js" defer></script><script src="vendor/ScrollTrigger.min.js" defer></script>
+  <script src="catalog.js" defer></script><script src="app.js" defer></script><script src="motion.js" defer></script>
+</head>
+<body>
+<svg width="0" height="0" aria-hidden="true" style="position:absolute;pointer-events:none"><defs><filter id="glass-refraction" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feTurbulence type="fractalNoise" baseFrequency=".012 .04" numOctaves="1" seed="8" result="noise"/><feGaussianBlur in="noise" stdDeviation="2" result="softNoise"/><feDisplacementMap in="SourceGraphic" in2="softNoise" scale="5" xChannelSelector="R" yChannelSelector="G"/></filter></defs></svg>
+<a class="skip-link" href="#employees">跳转到员工目录</a>
+<header class="site-header">
+  <a class="wordmark" href="#hero" aria-label="智能体集市首页">智能体集市</a>
+  <nav class="main-nav" aria-label="主导航"><a href="#employees">发现员工</a><a href="#employees">精选服务</a><a href="#how-it-works">使用指南</a></nav>
+  <div class="account-nav"><button data-action="account">我的工作台</button><span class="nav-divider" aria-hidden="true"></span><button class="login-button" data-action="account">登录 / 注册</button></div>
+</header>
+<main>
+  <section class="hero" id="hero" aria-labelledby="hero-title">
+    <div class="hero-layout">
+      <div class="hero-content">
+        <h1 class="hero-title" id="hero-title" data-hero-title><span data-title-line>把下一项工作，</span><span data-title-line>交给合适的</span><span data-title-line>数字员工。</span></h1>
+        <p class="hero-subtitle" data-hero-copy>为内容、设计、财税与开发，<br class="mobile-break">找到合适的专业服务。</p>
+        <div class="hero-actions" data-hero-actions><a class="button button-primary" href="#employees">浏览员工 <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6"/></svg></a><a class="button button-secondary" href="#how-it-works">了解免费试用</a></div>
+      </div>
+      <div class="hero-visual" data-hero-visual><img src="assets/hero.jpg" width="1642" height="958" alt="蓝色视觉设计稿、手写分镜与政策解读材料组成的工作成果画廊" fetchpriority="high" decoding="async"></div>
+    </div>
+  </section>
+  <section class="catalog-section" id="employees" aria-labelledby="catalog-title">
+    <div class="catalog-heading" data-reveal><h2 id="catalog-title">找到适合这项工作的员工</h2><label class="search-wrap"><span class="sr-only">搜索员工或工作内容</span><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4 4"/></svg><input type="search" id="role-search" placeholder="搜索员工或工作内容" autocomplete="off"></label></div>
+    <div class="catalog-toolbar"><div class="category-filters" id="category-filters" role="group" aria-label="按服务类型筛选"><button type="button" data-category="all" class="is-active" aria-pressed="true">推荐</button><button type="button" data-category="内容创作" class="" aria-pressed="false">内容创作</button><button type="button" data-category="设计" class="" aria-pressed="false">设计</button><button type="button" data-category="财税" class="" aria-pressed="false">财税</button><button type="button" data-category="法务" class="" aria-pressed="false">法务</button><button type="button" data-category="开发" class="" aria-pressed="false">开发</button><button type="button" data-category="翻译" class="" aria-pressed="false">翻译</button><button type="button" data-category="营销" class="" aria-pressed="false">营销</button><button type="button" data-category="数据" class="" aria-pressed="false">数据</button><button type="button" data-category="客服" class="" aria-pressed="false">客服</button></div><p class="result-count" id="result-count" aria-live="polite">8 位员工</p></div>
+    <div class="role-grid" id="role-grid"><article class="role-card" data-category="内容创作" data-name="内容创作" data-description="短视频脚本、分镜、口播稿、电商文案">
+  <button class="role-cover cover-content" data-action="details" data-role="content" aria-label="了解内容创作"><img src="assets/work-content.jpg" alt="内容创作工作素材" width="480" height="360" loading="eager" decoding="async"></button>
+  <div class="role-info"><button class="role-title" data-action="details" data-role="content">内容创作</button><p class="role-description">短视频脚本、分镜、口播稿、电商文案</p><p class="role-price"><span class="currency">¥</span>199<span class="unit">/篇</span></p><div class="role-actions"><button class="button button-primary" data-action="trial" data-role="content">免费试用</button><button class="button button-secondary" data-action="buy" data-role="content">购买</button></div></div>
+</article>
+<article class="role-card" data-category="设计" data-name="视觉设计" data-description="电商主图、详情页、海报、Logo 方向稿">
+  <button class="role-cover cover-design" data-action="details" data-role="design" aria-label="了解视觉设计"><img src="assets/work-design.jpg" alt="视觉设计工作素材" width="480" height="360" loading="eager" decoding="async"></button>
+  <div class="role-info"><button class="role-title" data-action="details" data-role="design">视觉设计</button><p class="role-description">电商主图、详情页、海报、Logo 方向稿</p><p class="role-price"><span class="currency">¥</span>99<span class="unit">/张</span></p><div class="role-actions"><button class="button button-primary" data-action="trial" data-role="design">免费试用</button><button class="button button-secondary" data-action="buy" data-role="design">购买</button></div></div>
+</article>
+<article class="role-card" data-category="财税" data-name="财税管家" data-description="记账、报表、发票归集、税务风险提醒">
+  <button class="role-cover cover-finance" data-action="details" data-role="finance" aria-label="了解财税管家"><img src="assets/work-finance.jpg" alt="财税管家工作素材" width="480" height="360" loading="eager" decoding="async"></button>
+  <div class="role-info"><button class="role-title" data-action="details" data-role="finance">财税管家</button><p class="role-description">记账、报表、发票归集、税务风险提醒</p><p class="role-price"><span class="currency">¥</span>299<span class="unit">/月</span></p><div class="role-actions"><button class="button button-primary" data-action="trial" data-role="finance">免费试用</button><button class="button button-secondary" data-action="buy" data-role="finance">购买</button></div></div>
+</article>
+<article class="role-card" data-category="资质" data-name="资质助手" data-description="条件预审、材料清单、全程陪跑">
+  <button class="role-cover cover-qualification" data-action="details" data-role="qualification" aria-label="了解资质助手"><img src="assets/work-finance.jpg" alt="资质助手工作素材" width="480" height="360" loading="lazy" decoding="async"></button>
+  <div class="role-info"><button class="role-title" data-action="details" data-role="qualification">资质助手</button><p class="role-description">条件预审、材料清单、全程陪跑</p><p class="role-price"><span class="currency">¥</span>99<span class="unit">/次</span></p><div class="role-actions"><button class="button button-primary" data-action="trial" data-role="qualification">免费试用</button><button class="button button-secondary" data-action="buy" data-role="qualification">购买</button></div></div>
+</article>
+<article class="role-card" data-category="法务" data-name="政策解读" data-description="政策要点梳理、条款说明与适用范围提示">
+  <button class="role-cover cover-legal" data-action="details" data-role="legal" aria-label="了解政策解读"><img src="assets/hero.jpg" alt="政策解读工作素材" width="480" height="360" loading="lazy" decoding="async"></button>
+  <div class="role-info"><button class="role-title" data-action="details" data-role="legal">政策解读</button><p class="role-description">政策要点梳理、条款说明与适用范围提示</p><p class="role-price"><span class="currency">¥</span>199<span class="unit">/份</span></p><div class="role-actions"><button class="button button-primary" data-action="trial" data-role="legal">免费试用</button><button class="button button-secondary" data-action="buy" data-role="legal">购买</button></div></div>
+</article>
+<article class="role-card" data-category="开发" data-name="开发工程师" data-description="落地页、H5、小程序页面、接口联调">
+  <button class="role-cover cover-development" data-action="details" data-role="development" aria-label="了解开发工程师"><img src="assets/work-development.svg" alt="开发工程师工作素材" width="480" height="360" loading="lazy" decoding="async"></button>
+  <div class="role-info"><button class="role-title" data-action="details" data-role="development">开发工程师</button><p class="role-description">落地页、H5、小程序页面、接口联调</p><p class="role-price"><span class="currency">¥</span>499<span class="unit">/页</span></p><div class="role-actions"><button class="button button-primary" data-action="trial" data-role="development">免费试用</button><button class="button button-secondary" data-action="buy" data-role="development">购买</button></div></div>
+</article>
+<article class="role-card" data-category="翻译" data-name="商务翻译" data-description="商务文档、合同、多语种字幕与配音">
+  <button class="role-cover cover-translation" data-action="details" data-role="translation" aria-label="了解商务翻译"><img src="assets/work-content.jpg" alt="商务翻译工作素材" width="480" height="360" loading="lazy" decoding="async"></button>
+  <div class="role-info"><button class="role-title" data-action="details" data-role="translation">商务翻译</button><p class="role-description">商务文档、合同、多语种字幕与配音</p><p class="role-price"><span class="currency">¥</span>99<span class="unit">/千字</span></p><div class="role-actions"><button class="button button-primary" data-action="trial" data-role="translation">免费试用</button><button class="button button-secondary" data-action="buy" data-role="translation">购买</button></div></div>
+</article>
+<article class="role-card" data-category="营销" data-name="直播支持" data-description="直播脚本、话术卡、场控清单">
+  <button class="role-cover cover-live" data-action="details" data-role="live" aria-label="了解直播支持"><img src="assets/work-content.jpg" alt="直播支持工作素材" width="480" height="360" loading="lazy" decoding="async"></button>
+  <div class="role-info"><button class="role-title" data-action="details" data-role="live">直播支持</button><p class="role-description">直播脚本、话术卡、场控清单</p><p class="role-price"><span class="currency">¥</span>199<span class="unit">/场</span></p><div class="role-actions"><button class="button button-primary" data-action="trial" data-role="live">免费试用</button><button class="button button-secondary" data-action="buy" data-role="live">购买</button></div></div>
+</article></div>
+    <div class="empty-state" id="empty-state" hidden><h3>暂时没有找到合适的员工</h3><p>换个关键词，或者看看其他工作类型。</p><button class="button button-secondary" id="reset-search">查看全部员工</button></div>
+    <noscript><p class="catalog-footnote">员工与价格可直接浏览；开启 JavaScript 后可体验搜索、筛选和详情。</p></noscript>
+    <p class="catalog-footnote">页面展示服务与参考价格，实际服务范围及计费方式以正式说明为准。</p>
+  </section>
+  <section class="how-section" id="how-it-works" aria-labelledby="how-title" data-reveal>
+    <div class="how-heading"><h2 id="how-title">从一项具体工作开始。</h2><p>先了解服务，再决定下一步。</p></div>
+    <div class="how-grid">
+      <div class="how-step"><h3><span class="step-num">01</span>找到合适的员工</h3><p>按工作类型浏览，或直接搜索你希望完成的事，查看员工的服务范围。</p></div>
+      <div class="how-step"><h3><span class="step-num">02</span>描述需求，了解试用</h3><p>说清工作内容和希望获得的成果，确认试用范围及适用条件。</p></div>
+      <div class="how-step"><h3><span class="step-num">03</span>确认内容，再购买</h3><p>了解按篇、按张或按月的计价方式，确认工作量与交付范围。</p></div>
+    </div>
+  </section>
+</main>
+<footer class="site-footer"><a class="footer-wordmark" href="#hero">智能体集市</a><div class="footer-links"><button data-action="guide">使用指南</button><button data-action="account">我的项目</button><button data-action="account">订单与发票</button></div><span>数字员工服务 · 设计预览</span></footer>
+<dialog class="service-dialog" id="service-dialog" aria-labelledby="dialog-title"><button class="dialog-close" data-close-dialog aria-label="关闭对话框"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button><div id="dialog-body"></div></dialog>
+<div class="toast" id="toast" role="status" hidden></div>
+</body></html>

@@ -242,7 +242,7 @@
 
   function showAccount() {
     showDialog(
-      titleMarkup("我的工作台", "登录后查看工作记录、项目与订单。") +
+      titleMarkup("账号登录", "连接账号后同步工作记录。") +
       '<div class="dialog-callout">账号登录暂未开放</div>' +
       '<div class="dialog-actions"><button type="button" class="button button-primary" data-close-dialog>继续浏览</button></div>'
     );

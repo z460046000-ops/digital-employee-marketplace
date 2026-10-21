@@ -43,5 +43,6 @@
 @media(max-width:767px){.wordmark img{width:135px}.site-header .wordmark{min-width:135px}.catalog-heading{display:block}.catalog-section>.marketplace-tabs{margin-bottom:20px}.role-price{font-size:25px}}
 
 /* 员工筛选与场景筛选共享一行工具栏。 */
+.account-nav>a{padding:10px 0;white-space:nowrap}.account-nav>a:hover{color:#515968}@media(max-width:767px){.account-nav{gap:13px}.account-nav>a{font-size:12px}}
 #agent-panel .catalog-toolbar{display:flex;align-items:center;justify-content:space-between;gap:24px;margin-bottom:18px}#agent-panel .catalog-toolbar>.category-filters{flex:1;min-width:0;padding-top:0;padding-bottom:0}#agent-panel .catalog-toolbar>.search-wrap{width:min(390px,44%);flex-shrink:0}#agent-panel>.result-count{display:block;font-size:12px;line-height:1.7;margin:0 0 18px;color:#7a818c}
 @media(max-width:767px){#agent-panel .catalog-toolbar{flex-direction:column-reverse;align-items:stretch;gap:19px;margin-bottom:15px}#agent-panel .catalog-toolbar>.search-wrap{width:100%}#agent-panel>.result-count{font-size:11px;margin-bottom:17px}}

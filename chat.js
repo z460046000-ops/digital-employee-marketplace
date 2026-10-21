@@ -2,7 +2,19 @@
   "use strict";
 
   var catalog = Array.isArray(window.marketplaceCatalog) ? window.marketplaceCatalog : [];
+  var store = window.WorkspaceStore;
   var params = new URLSearchParams(window.location.search);
+  var conversation = null;
+  var initialStorageError = null;
+  if (params.get("conversation") && store) {
+    try { conversation = store.getConversation(params.get("conversation")); }
+    catch (error) { initialStorageError = error; }
+  }
+  if (conversation) {
+    params.set("employee", conversation.employeeId);
+    if (conversation.sceneId) params.set("scene", conversation.sceneId);
+    else params.delete("scene");
+  }
   var requestedEmployee = params.get("employee");
   var employee = catalog.find(function (item) { return item.id === requestedEmployee; }) || catalog[0];
   if (!employee) return;
@@ -31,6 +43,9 @@
   var capabilityTrigger = document.getElementById("show-capabilities");
   var contextPanel = document.getElementById("context-panel");
   var contextToggle = document.getElementById("context-toggle");
+  var draftTimer;
+  var historyPanel = document.getElementById("recent-panel");
+  var historyToggle = document.getElementById("history-toggle");
 
   function textElement(tag, className, text) {
     var element = document.createElement(tag);
@@ -107,6 +122,7 @@
     var article = textElement("article", "message " + (sender === "user" ? "message-user" : "message-assistant"));
     var meta = textElement("div", "message-meta");
     meta.appendChild(textElement("span", "message-author", sender === "user" ? "你" : employee.name));
+    if (sender === "user") meta.appendChild(textElement("span", "message-local-state", "未发送"));
     article.appendChild(meta);
     if (text) {
       var body = textElement("div", "message-content");
@@ -144,6 +160,7 @@
     document.getElementById("member-avatar").textContent = profile.mark;
     document.getElementById("welcome-message").textContent = "告诉我你希望完成的工作，以及手头已有的资料。可以先提供" + profile.preparation + "。";
     document.getElementById("back-to-marketplace").href = "index.html?employee=" + encodeURIComponent(employee.id) + "#employees";
+    document.getElementById("new-conversation").href = "chat.html?employee=" + encodeURIComponent(employee.id) + (params.get("scene") ? "&scene=" + encodeURIComponent(params.get("scene")) : "");
     var prompts = document.getElementById("starter-prompts");
     prompts.replaceChildren();
     profile.prompts.forEach(function (prompt, index) {
@@ -192,7 +209,30 @@
     input.focus();
   });
 
-  input.addEventListener("input", updateComposer);
+  function saveDraft() {
+    window.clearTimeout(draftTimer);
+    if (!store || (!conversation && !input.value.trim())) return;
+    try {
+      if (!conversation) {
+        conversation = store.createConversation({ employeeId: employee.id, sceneId: params.get("scene") || "" });
+        window.history.replaceState(null, "", store.chatUrl(conversation));
+      }
+      conversation = store.setDraft(conversation.id, input.value);
+      renderRecent();
+    }
+    catch (error) { storageFailed(error); }
+  }
+  input.addEventListener("input", function () {
+    updateComposer();
+    if (!conversation && input.value.trim()) { saveDraft(); return; }
+    window.clearTimeout(draftTimer);
+    draftTimer = window.setTimeout(saveDraft, 400);
+  });
+  window.addEventListener("pagehide", saveDraft);
+  window.addEventListener("pageshow", function (event) { if (event.persisted) renderRecent(); });
+  document.addEventListener("click", function (event) {
+    if (event.target.closest("a[href]")) saveDraft();
+  }, true);
   input.addEventListener("keydown", function (event) {
     if (event.key === "Enter" && !event.shiftKey && !event.isComposing && event.keyCode !== 229) {
       event.preventDefault();
@@ -229,17 +269,30 @@
       input.focus();
       return;
     }
+    try {
+      if (!store) throw new Error("工作记录暂时无法保存，请稍后重试。");
+      window.clearTimeout(draftTimer);
+      if (!conversation) conversation = store.createConversation({ employeeId: employee.id, sceneId: params.get("scene") || "" });
+      conversation = store.addMessage(conversation.id, { text: text, files: files });
+      store.setDraft(conversation.id, "");
+      window.history.replaceState(null, "", store.chatUrl(conversation));
+    } catch (error) {
+      storageFailed(error);
+      return;
+    }
     appendMessage("user", text, files);
+    document.querySelector(".message-assistant").hidden = true;
     if (text) requirementTexts.push(text);
     files.forEach(function (file) {
-      if (!sentFiles.some(function (existing) { return existing.name === file.name && existing.size === file.size && existing.lastModified === file.lastModified; })) sentFiles.push(file);
+      if (!sentFiles.some(function (existing) { return existing.name === file.name && existing.size === file.size; })) sentFiles.push(file);
     });
     input.value = "";
     pendingFiles = [];
     updatePendingFiles();
     updateRequirement();
     updateReferences();
-    notify("消息已记录在当前页面");
+    renderRecent();
+    notify("已保存到工作记录，数字员工暂未连接。");
     scrollToLatest();
     input.focus();
   });
@@ -266,7 +319,71 @@
   contextToggle.addEventListener("click", function () { setContextOpen(!contextPanel.classList.contains("is-open")); });
   document.getElementById("close-context").addEventListener("click", function () { setContextOpen(false); });
 
+  function storageFailed(error) {
+    var message = error && error.message ? error.message : "工作记录暂时无法读取。";
+    document.getElementById("history-storage-state").textContent = message;
+    notify(message);
+  }
+
+  function renderRecent() {
+    var holder = document.getElementById("recent-conversations");
+    holder.replaceChildren();
+    try {
+      var recent = store ? store.listConversations().filter(function (item) { return item.messages.length || item.draft.trim(); }).slice(0, 12) : [];
+      if (!recent.length) holder.appendChild(textElement("p", "recent-empty", "开始一项工作后，在这里继续。"));
+      recent.forEach(function (item) {
+        var role = catalog.find(function (entry) { return entry.id === item.employeeId; });
+        var link = textElement("a", "recent-conversation");
+        link.href = store.chatUrl(item);
+        if (conversation && conversation.id === item.id) { link.classList.add("is-current"); link.setAttribute("aria-current", "page"); }
+        link.appendChild(textElement("strong", "", item.messages.length ? item.title : (item.draft.trim().slice(0, 30) || "新对话")));
+        link.appendChild(textElement("span", "", (role ? role.name : "数字员工") + " · " + new Date(item.updatedAt).toLocaleDateString("zh-CN", { month: "numeric", day: "numeric" })));
+        holder.appendChild(link);
+      });
+    } catch (error) {
+      holder.appendChild(textElement("p", "recent-empty", "暂时无法读取工作记录。"));
+      storageFailed(error);
+    }
+  }
+
+  function restoreConversation() {
+    if (!conversation) return;
+    if (conversation.messages.length) document.querySelector(".message-assistant").hidden = true;
+    conversation.messages.forEach(function (message) {
+      appendMessage(message.role, message.text, message.files);
+      if (message.text) requirementTexts.push(message.text);
+      message.files.forEach(function (file) {
+        if (!sentFiles.some(function (entry) { return entry.name === file.name && entry.size === file.size; })) sentFiles.push(file);
+      });
+    });
+    input.value = conversation.draft;
+    updateRequirement();
+    updateReferences();
+    if (conversation.messages.length) scrollToLatest();
+  }
+
+  function setHistoryOpen(open) {
+    historyPanel.classList.toggle("is-open", open);
+    historyToggle.setAttribute("aria-expanded", String(open));
+    historyToggle.setAttribute("aria-label", open ? "收起最近对话" : "展开最近对话");
+    if (open) document.getElementById("close-history").focus();
+    else historyToggle.focus();
+  }
+  historyToggle.addEventListener("click", function () { setHistoryOpen(!historyPanel.classList.contains("is-open")); });
+  document.getElementById("close-history").addEventListener("click", function () { setHistoryOpen(false); });
+  document.addEventListener("keydown", function (event) {
+    if (event.key === "Escape" && historyPanel.classList.contains("is-open")) setHistoryOpen(false);
+  });
+  if (store) store.subscribe(function (event) {
+    if (event.type === "error") storageFailed(event.error);
+    else renderRecent();
+  });
+
   updateProfile();
+  restoreConversation();
+  renderRecent();
   updateComposer();
+  if (initialStorageError) storageFailed(initialStorageError);
+  else if (params.get("conversation") && !conversation) notify("当前浏览器中没有这条对话，可以发起新的工作。");
   if (requestedEmployee && !catalog.some(function (item) { return item.id === requestedEmployee; })) notify("没有找到指定员工，已打开内容创作试用对话。");
 })();

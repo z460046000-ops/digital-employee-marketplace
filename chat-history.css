@@ -1,0 +1,54 @@
+.chat-header { gap: 18px; }
+.workspace-link { margin-left: auto; display: inline-flex; align-items: center; gap: 9px; font-size: 13px; color: #596476; padding: 12px 0; }
+.workspace-link svg { width: 15px; height: 15px; }
+.workspace { max-width: 1600px; grid-template-columns: 214px minmax(0, 1fr) 280px; gap: 34px; }
+.recent-panel { min-height: 0; display: flex; flex-direction: column; padding: 13px 21px 22px 0; border-right: 1px solid #e6e9ef; }
+.recent-heading { display: flex; justify-content: space-between; align-items: center; margin: 0 0 21px; }
+.recent-heading h2 { margin: 0; font-size: 13px; font-weight: 500; color: #697383; }
+.new-conversation { display: flex; align-items: center; justify-content: center; gap: 9px; min-height: 44px; border: 1px solid #dce2eb; border-radius: 11px; background: rgba(255,255,255,.72); font-size: 12px; margin-bottom: 23px; transition: background 160ms, border-color 160ms; }
+.new-conversation svg { width: 16px; height: 16px; }
+.recent-conversations { min-height: 0; overflow-y: auto; scrollbar-width: thin; flex: 1; }
+.recent-conversation strong { display: block; font-size: 12px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.6; }
+.recent-conversation { display: block; padding: 12px 11px; margin: 0 0 7px; border: 1px solid transparent; border-radius: 10px; transition: background 160ms, border-color 160ms; }
+.recent-conversation span { display: block; font-size: 10px; color: #8a94a2; margin-top: 5px; }
+.recent-conversation.is-current { background: #fff; border-color: #e2e7ef; box-shadow: 0 2px 8px rgba(29,43,64,.02); }
+.recent-empty { margin: 8px 9px; font-size: 12px; line-height: 1.9; color: #8c96a4; }
+.recent-footer { padding: 18px 9px 0; }
+.recent-footer a { display: flex; align-items: center; justify-content: space-between; font-size: 12px; color: #5f6b7b; min-height: 36px; }
+.recent-footer p { font-size: 10px; color: #929ca9; line-height: 1.8; margin: 7px 0 0; }
+.history-toggle, .history-close { display: none; background: transparent; flex-shrink: 0; width: 40px; height: 40px; padding: 10px; border-radius: 9px; color: #647084; }
+.history-close { width: 32px; height: 32px; padding: 8px; }
+.message-local-state { font-size: 10px; font-weight: 400; color: #929caa; }
+@media (hover:hover) and (pointer:fine) {
+  .new-conversation:hover { background: #fff; border-color: #b7c5d9; }
+  .recent-conversation:hover { background: #eef2f7; }
+  .workspace-link:hover { color: #17191d; }
+  .history-toggle:hover, .history-close:hover { background: #edf1f6; }
+}
+@media (max-width: 1250px) {
+  .workspace { grid-template-columns: 200px minmax(0, 1fr); gap: 30px; max-width: 1150px; padding-inline: 28px; }
+  .context-toggle { display: grid; }
+  .context-panel { display: none; position: fixed; z-index: 25; inset: 89px 15px 20px auto; width: min(320px,calc(100vw - 30px)); background: rgba(250,251,253,.98); padding: 17px; border: 1px solid #e1e6ee; border-radius: 17px; box-shadow: 0 16px 65px rgba(28,44,72,.13); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }
+  .context-panel.is-open { display: block; }
+  .context-close { display: grid; }
+}
+@media (max-width: 930px) {
+  .workspace { display: block; max-width: 850px; }
+  .history-toggle { display: grid; place-items: center; }
+  .recent-panel { display: none; position: fixed; z-index: 30; inset: 88px auto 18px 16px; width: min(270px,calc(100vw - 32px)); padding: 22px 17px; border: 1px solid rgba(255,255,255,.9); border-radius: 17px; background: rgba(248,250,253,.96); backdrop-filter: blur(22px); -webkit-backdrop-filter: blur(22px); box-shadow: 0 16px 65px rgba(28,44,72,.14); }
+  .recent-panel.is-open { display: flex; }
+  .history-close { display: grid; place-items: center; }
+  .recent-heading { margin-bottom: 17px; }
+}
+@media (max-width: 600px) {
+  .chat-header { gap: 6px; padding-inline: 9px; }
+  .chat-header .wordmark img { width: 116px; }
+  .workspace-link { font-size: 12px; gap: 5px; padding-right: 7px; }
+  .workspace-link svg { width: 12px; height: 12px; }
+  .workspace { padding-inline: 20px; }
+  .recent-panel { top: 74px; }
+  .context-panel { top: 75px; }
+}
+@media (prefers-reduced-transparency:reduce),(prefers-contrast:more) {
+  .recent-panel.is-open, .context-panel.is-open { background: #fff; backdrop-filter: none; -webkit-backdrop-filter: none; border-color: #bbc6d5; }
+}

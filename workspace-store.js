@@ -40,12 +40,13 @@
     return { name: file.name, size: file.size, type: file.type };
   }
 
-  function validateMessage(message) {
-    if (!isRecord(message) || !isIdentifier(message.id) || message.role !== "user" ||
+  function validateMessage(message, isExample) {
+    if (!isRecord(message) || !isIdentifier(message.id) ||
+      (message.role !== "user" && !(isExample && message.role === "assistant")) ||
       typeof message.text !== "string" || !Array.isArray(message.files) || !isDate(message.createdAt)) throw invalidData();
     var files = message.files.map(validateFile);
     if (!message.text.trim() && !files.length) throw invalidData();
-    return { id: message.id, role: "user", text: message.text, files: files, createdAt: message.createdAt };
+    return { id: message.id, role: message.role, text: message.text, files: files, createdAt: message.createdAt };
   }
 
   function validateConversation(conversation) {
@@ -53,14 +54,15 @@
       !(conversation.sceneId === null || isIdentifier(conversation.sceneId)) || typeof conversation.title !== "string" ||
       !conversation.title.trim() || !isDate(conversation.createdAt) || !isDate(conversation.updatedAt) ||
       conversation.updatedAt < conversation.createdAt || !Array.isArray(conversation.messages) ||
-      typeof conversation.draft !== "string" || ["draft", "unconnected"].indexOf(conversation.status) < 0) throw invalidData();
-    var messages = conversation.messages.map(validateMessage);
+      typeof conversation.draft !== "string" || ["draft", "unconnected", "completed", "running"].indexOf(conversation.status) < 0) throw invalidData();
+    var isExample = conversation.isExample === true && conversation.id.indexOf("example_") === 0;
+    var messages = conversation.messages.map(function (message) { return validateMessage(message, isExample); });
     var messageIds = new Set(messages.map(function (message) { return message.id; }));
     if (messageIds.size !== messages.length) throw invalidData();
     return {
       id: conversation.id, employeeId: conversation.employeeId, sceneId: conversation.sceneId,
       title: conversation.title, createdAt: conversation.createdAt, updatedAt: conversation.updatedAt,
-      messages: messages, draft: conversation.draft, status: conversation.status
+      messages: messages, draft: conversation.draft, status: conversation.status, isExample: isExample
     };
   }
 
@@ -106,6 +108,10 @@
 
   function find(data, conversationId) {
     var conversation = data.conversations.find(function (item) { return item.id === conversationId; });
+    if (!conversation) {
+      var example = examples().find(function (item) { return item.id === conversationId; });
+      if (example) { conversation = example; data.conversations.push(conversation); }
+    }
     if (!conversation) throw failure("WORKSPACE_CONVERSATION_NOT_FOUND", "没有找到这条对话，请从历史对话中重新选择。");
     return conversation;
   }
@@ -119,13 +125,24 @@
     return characters.slice(0, 30).join("") + (characters.length > 30 ? "…" : "");
   }
 
+  function examples() {
+    var source = window.WorkspaceExamples;
+    return source && Array.isArray(source.conversations) ? source.conversations.map(validateConversation) : [];
+  }
+
+  function combinedConversations() {
+    var local = read().conversations;
+    var existing = new Set(local.map(function (item) { return item.id; }));
+    return local.concat(examples().filter(function (item) { return !existing.has(item.id); }));
+  }
+
   window.WorkspaceStore = {
     listConversations: function () {
-      return read().conversations.sort(function (a, b) { return b.updatedAt.localeCompare(a.updatedAt); });
+      return combinedConversations().sort(function (a, b) { return b.updatedAt.localeCompare(a.updatedAt); });
     },
 
     getConversation: function (conversationId) {
-      return read().conversations.find(function (item) { return item.id === conversationId; }) || null;
+      return combinedConversations().find(function (item) { return item.id === conversationId; }) || null;
     },
 
     createConversation: function (options) {
@@ -200,6 +217,7 @@
     },
 
     getUsageSummary: function () {
+      if (window.WorkspaceExamples && window.WorkspaceExamples.usage) return copy(window.WorkspaceExamples.usage);
       return { status: "unavailable", inputTokens: null, outputTokens: null, totalTokens: null, remainingQuota: null, usedQuota: null, events: [] };
     }
   };

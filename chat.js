@@ -118,11 +118,11 @@
     state.classList.toggle("has-requirement", requirementTexts.length > 0);
   }
 
-  function appendMessage(sender, text, files) {
+  function appendMessage(sender, text, files, isExampleHistory) {
     var article = textElement("article", "message " + (sender === "user" ? "message-user" : "message-assistant"));
     var meta = textElement("div", "message-meta");
     meta.appendChild(textElement("span", "message-author", sender === "user" ? "你" : employee.name));
-    if (sender === "user") meta.appendChild(textElement("span", "message-local-state", "未发送"));
+    if (sender === "user" && !isExampleHistory) meta.appendChild(textElement("span", "message-local-state", "未发送"));
     article.appendChild(meta);
     if (text) {
       var body = textElement("div", "message-content");
@@ -153,6 +153,7 @@
     var scenarioName = scenarioNames[params.get("scene")];
     document.title = (scenarioName || employee.name) + " · AgentWan";
     if (scenarioName) document.querySelector(".eyebrow").textContent = scenarioName;
+    if (conversation && conversation.isExample) document.querySelector(".eyebrow").textContent = "示例对话" + (scenarioName ? " · " + scenarioName : "");
     document.getElementById("employee-name").textContent = employee.name;
     document.getElementById("employee-mark").textContent = profile.mark;
     document.getElementById("welcome-author").textContent = employee.name;
@@ -350,8 +351,8 @@
     if (!conversation) return;
     if (conversation.messages.length) document.querySelector(".message-assistant").hidden = true;
     conversation.messages.forEach(function (message) {
-      appendMessage(message.role, message.text, message.files);
-      if (message.text) requirementTexts.push(message.text);
+      appendMessage(message.role, message.text, message.files, conversation.isExample);
+      if (message.text && message.role === "user") requirementTexts.push(message.text);
       message.files.forEach(function (file) {
         if (!sentFiles.some(function (entry) { return entry.name === file.name && entry.size === file.size; })) sentFiles.push(file);
       });

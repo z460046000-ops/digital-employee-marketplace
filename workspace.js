@@ -53,7 +53,9 @@
     var count = Array.isArray(conversation.messages) ? conversation.messages.length : 0;
     var title = conversation.title || (employee.name + "的新工作");
     var subtitle = conversation.draft && !count ? "草稿待继续" : count ? count + " 条消息" : "等待你的工作需求";
-    return '<a class="conversation-row" href="' + escapeHTML(conversationUrl(conversation)) + '"><span class="employee-avatar" aria-hidden="true">' + escapeHTML(employee.name.charAt(0)) + '</span><div class="conversation-copy"><h3 class="conversation-title">' + escapeHTML(title) + '</h3><div class="conversation-meta"><span>' + escapeHTML(employee.name) + '</span><span>' + escapeHTML(subtitle) + '</span></div></div><time class="conversation-time numeric" datetime="' + escapeHTML(conversation.updatedAt || conversation.createdAt) + '">' + escapeHTML(dateLabel(conversation.updatedAt || conversation.createdAt)) + '</time>' + chevron + '</a>';
+    var exampleStatuses = { completed: "已完成", running: "进行中", draft: "待补充" };
+    var exampleMeta = conversation.isExample ? '<span class="conversation-state is-' + (conversation.status === "running" ? "running" : conversation.status === "completed" ? "completed" : "draft") + '">' + escapeHTML(exampleStatuses[conversation.status] || "待补充") + '</span><span class="example-label">示例</span>' : "";
+    return '<a class="conversation-row" href="' + escapeHTML(conversationUrl(conversation)) + '"><span class="employee-avatar" aria-hidden="true">' + escapeHTML(employee.name.charAt(0)) + '</span><div class="conversation-copy"><h3 class="conversation-title">' + escapeHTML(title) + '</h3><div class="conversation-meta"><span>' + escapeHTML(employee.name) + '</span><span>' + escapeHTML(subtitle) + '</span>' + exampleMeta + '</div></div><time class="conversation-time numeric" datetime="' + escapeHTML(conversation.updatedAt || conversation.createdAt) + '">' + escapeHTML(dateLabel(conversation.updatedAt || conversation.createdAt)) + '</time>' + chevron + '</a>';
   }
 
   function emptyState(title, copy, action) {
@@ -138,19 +140,20 @@
 
   function renderUsage() {
     var events = usageEvents();
-    var isAvailable = usage.status === "available" || usage.status === "synced";
+    var isAvailable = usage.status === "available" || usage.status === "synced" || usage.status === "example";
     var allPeriods = document.getElementById("usage-period").value === "all" && document.getElementById("usage-employee").value === "all";
     var input = isAvailable ? (allPeriods && usage.inputTokens != null ? usage.inputTokens : aggregate(events, "inputTokens")) : null;
     var output = isAvailable ? (allPeriods && usage.outputTokens != null ? usage.outputTokens : aggregate(events, "outputTokens")) : null;
     setText("overview-quota", numeric(usage.remainingQuota));
     setText("usage-quota", numeric(usage.remainingQuota));
-    setText("overview-quota-note", usage.remainingQuota == null ? "等待额度同步" : "当前可用试用额度");
-    setText("usage-quota-note", usage.remainingQuota == null ? "等待额度同步" : "当前可用试用额度");
+    var quotaNote = usage.remainingQuota == null ? "等待额度同步" : "当前可用试用额度 · " + (usage.quotaUnit || "Token");
+    setText("overview-quota-note", quotaNote);
+    setText("usage-quota-note", quotaNote);
     setText("overview-tokens", numeric(usage.totalTokens));
     setText("overview-token-note", usage.totalTokens == null ? "等待用量同步" : "累计输入与输出 Token");
     setText("usage-input", numeric(input));
     setText("usage-output", numeric(output));
-    setText("usage-sync-status", isAvailable ? "用量已同步" : "等待用量同步");
+    setText("usage-sync-status", usage.status === "example" ? "示例用量" : isAvailable ? "用量已同步" : "等待用量同步");
     setText("usage-record-count", events.length ? numeric(events.length) + " 次调用" : isAvailable ? "0 次调用" : "— 次调用");
     document.getElementById("usage-rows").innerHTML = events.map(function (event) {
       var employee = employeeFor(event.employeeId);
@@ -158,7 +161,8 @@
       var conversationTitle = conversation ? conversation.title || (employee.name + "的新工作") : event.conversationTitle || "—";
       var conversationCell = conversation ? '<a href="' + escapeHTML(conversationUrl(conversation)) + '">' + escapeHTML(conversationTitle) + '</a>' : escapeHTML(conversationTitle);
       var statuses = { success: "已完成", completed: "已完成", failed: "失败", running: "进行中", pending: "待处理" };
-      return '<tr><td class="numeric">' + escapeHTML(event.id || event.callId || "—") + '<small>' + escapeHTML(dateLabel(event.createdAt || event.timestamp)) + '</small></td><td>' + conversationCell + '</td><td>' + escapeHTML(employee.name) + '</td><td class="numeric">' + numeric(tokenValue(event, "inputTokens")) + '</td><td class="numeric">' + numeric(tokenValue(event, "outputTokens")) + '</td><td><span class="status-chip">' + escapeHTML(statuses[event.status] || "待同步") + '</span></td></tr>';
+      var statusClass = event.status === "success" || event.status === "completed" ? " is-completed" : event.status === "running" ? " is-running" : event.status === "failed" ? " is-failed" : "";
+      return '<tr><td class="numeric">' + escapeHTML(event.id || event.callId || "—") + '<small>' + escapeHTML(dateLabel(event.createdAt || event.timestamp)) + '</small></td><td>' + conversationCell + '</td><td>' + escapeHTML(employee.name) + '</td><td class="numeric">' + numeric(tokenValue(event, "inputTokens")) + '</td><td class="numeric">' + numeric(tokenValue(event, "outputTokens")) + '</td><td><span class="status-chip' + statusClass + '">' + escapeHTML(statuses[event.status] || "待同步") + '</span></td></tr>';
     }).join("");
     document.getElementById("usage-empty").hidden = events.length > 0;
     setText("usage-empty-title", isAvailable ? "暂时没有符合条件的调用" : "用量记录会在这里汇集");

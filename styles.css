@@ -41,3 +41,7 @@
 .role-price,.dialog-price,.result-count,.step-num,.order-preview dd{font-family:"D-DIN","DIN Alternate",sans-serif;font-variant-numeric:tabular-nums}.role-price{font-size:26px;font-weight:600}.role-price .unit{font-family:"PingFang SC","Microsoft YaHei",sans-serif}
 .wordmark img{width:152px;height:auto;display:block}.footer-wordmark img{width:128px;height:auto}.site-header .wordmark{min-width:152px}.catalog-heading{justify-content:flex-end}.catalog-section>.marketplace-tabs{margin-bottom:26px}.button:disabled{opacity:.6;cursor:not-allowed}.button:disabled:hover{background:var(--ink);transform:none}
 @media(max-width:767px){.wordmark img{width:135px}.site-header .wordmark{min-width:135px}.catalog-heading{display:block}.catalog-section>.marketplace-tabs{margin-bottom:20px}.role-price{font-size:25px}}
+
+/* 员工筛选与场景筛选共享一行工具栏。 */
+#agent-panel .catalog-toolbar{display:flex;align-items:center;justify-content:space-between;gap:24px;margin-bottom:18px}#agent-panel .catalog-toolbar>.category-filters{flex:1;min-width:0;padding-top:0;padding-bottom:0}#agent-panel .catalog-toolbar>.search-wrap{width:min(390px,44%);flex-shrink:0}#agent-panel>.result-count{display:block;font-size:12px;line-height:1.7;margin:0 0 18px;color:#7a818c}
+@media(max-width:767px){#agent-panel .catalog-toolbar{flex-direction:column-reverse;align-items:stretch;gap:19px;margin-bottom:15px}#agent-panel .catalog-toolbar>.search-wrap{width:100%}#agent-panel>.result-count{font-size:11px;margin-bottom:17px}}

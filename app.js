@@ -43,8 +43,8 @@
   function navigationFromHash() {
     var current = window.location.hash;
     setNavigation(current === "#how-it-works" ? "guide" : current === "#featured" ? "featured" : "discover");
-    if (current === "#featured") {
-      selectedScope = "featured";
+    if (current !== "#how-it-works") {
+      selectedScope = current === "#featured" ? "featured" : "all";
       selectedCategory = "all";
       applyFilters();
     }

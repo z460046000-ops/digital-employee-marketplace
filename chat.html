@@ -14,8 +14,7 @@
 <body>
   <a class="skip-link" href="#message-input">跳转到消息输入</a>
   <header class="chat-header">
-    <a class="wordmark" id="back-to-marketplace" href="index.html#employees" aria-label="智能体集市，返回员工目录">智能体集市</a>
-    <span class="preview-label">交互预览</span>
+    <a class="wordmark" id="back-to-marketplace" href="index.html#employees" aria-label="AgentWan，返回员工目录"><img src="assets/agentwan.svg" alt="AgentWan" width="142" height="30"></a>
   </header>
 
   <main class="workspace">
@@ -28,12 +27,11 @@
 
       <div class="message-scroll" id="message-scroll" tabindex="0" aria-label="对话内容">
         <div class="conversation-inner">
-          <div class="conversation-notice"><span class="notice-dot" aria-hidden="true"></span><p>这里展示对话交互。消息与附件仅留在当前页面，尚未连接真实 AI 服务。</p></div>
           <div class="messages" id="messages" role="log" aria-label="与数字员工的对话" aria-live="polite" aria-relevant="additions text">
             <article class="message message-assistant">
-              <div class="message-meta"><span class="message-author" id="welcome-author">内容创作</span><span class="example-badge">交互示例</span></div>
+              <div class="message-meta"><span class="message-author" id="welcome-author">内容创作</span></div>
               <div class="message-content"><h2>从一项具体工作开始。</h2><p id="welcome-message">告诉我你希望完成的工作，以及手头已有的资料。可以先描述内容主题、面向的人群和发布渠道。</p></div>
-              <div class="starter-prompts" id="starter-prompts" aria-label="示例需求">
+              <div class="starter-prompts" id="starter-prompts" aria-label="快捷开始">
                 <button type="button" data-prompt="我想准备一份短视频脚本，请先帮我梳理需要提供的资料。">准备一份短视频脚本 <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 18 18 6M6 6h12v12"/></svg></button>
                 <button type="button" data-prompt="我想为一款产品写电商文案，需要先明确哪些信息？">开始一份电商文案 <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 18 18 6M6 6h12v12"/></svg></button>
               </div>
@@ -47,9 +45,9 @@
           <div class="pending-files" id="pending-files" aria-label="待发送附件" hidden></div>
           <label class="sr-only" for="message-input">给数字员工发送工作需求</label>
           <textarea id="message-input" name="message" rows="2" placeholder="说说你希望完成的工作…" aria-describedby="composer-hint"></textarea>
-          <div class="composer-toolbar"><div class="composer-tools"><button class="attachment-button" type="button" id="choose-files" aria-label="添加参考文件"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 12.5 14.8 5.7a3.5 3.5 0 0 1 5 5l-9.2 9.2a5 5 0 0 1-7.1-7.1l9.2-9.2M8 12.5l6.4-6.4a1.5 1.5 0 0 1 2.1 2.1l-7.8 7.9a2.5 2.5 0 0 1-3.5-3.5"/></svg><span>添加参考</span></button><input class="sr-only" id="file-input" type="file" multiple tabindex="-1" aria-label="选择本地参考文件"></div><button class="send-button" id="send-message" type="submit" aria-label="发送消息"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5M6 11l6-6 6 6"/></svg></button></div>
+          <div class="composer-toolbar"><div class="composer-tools"><button class="attachment-button" type="button" id="choose-files" aria-label="添加参考文件"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 12.5 14.8 5.7a3.5 3.5 0 0 1 5 5l-9.2 9.2a5 5 0 0 1-7.1-7.1l9.2-9.2M8 12.5l6.4-6.4a1.5 1.5 0 0 1 2.1 2.1l-7.8 7.9a2.5 2.5 0 0 1-3.5-3.5"/></svg><span>添加参考</span></button><input class="sr-only" id="file-input" type="file" multiple tabindex="-1" aria-label="选择本地参考文件"><span class="connection-state" role="status">数字员工暂未连接</span></div><button class="send-button" id="send-message" type="submit" aria-label="发送消息"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5M6 11l6-6 6 6"/></svg></button></div>
         </form>
-        <p class="composer-hint" id="composer-hint">Enter 发送，Shift + Enter 换行 <span aria-hidden="true">·</span> 附件仅展示文件名</p>
+        <p class="composer-hint" id="composer-hint">Enter 发送，Shift + Enter 换行</p>
       </div>
     </section>
 
@@ -63,12 +61,12 @@
         <p class="field-note">以上字段需单独确认，不从对话中自动提取。</p>
       </section>
       <section class="context-card" aria-labelledby="members-title"><div class="card-heading"><h3 id="members-title">当前对话</h3><span class="subtle-count">2 位参与方</span></div><div class="member"><span class="member-avatar human-avatar" aria-hidden="true">你</span><div><strong>你</strong><p>需求发起人</p></div></div><div class="member"><span class="member-avatar employee-avatar" id="member-avatar" aria-hidden="true">文</span><div><strong id="member-name">内容创作</strong><p>当前试用的数字员工</p></div></div></section>
-      <section class="context-card" aria-labelledby="files-title"><div class="card-heading"><h3 id="files-title">参考文件</h3><span class="subtle-count" id="file-count">0 个</span></div><div id="reference-files"><p class="empty-copy">还没有添加参考文件。</p></div><p class="field-note">本次预览不上传或读取文件内容。</p></section>
+      <section class="context-card" aria-labelledby="files-title"><div class="card-heading"><h3 id="files-title">参考文件</h3><span class="subtle-count" id="file-count">0 个</span></div><div id="reference-files"><p class="empty-copy">还没有添加参考文件。</p></div></section>
     </aside>
   </main>
 
   <dialog class="capability-dialog" id="capability-dialog" aria-labelledby="capability-title"><button class="dialog-close" type="button" id="close-capabilities" aria-label="关闭员工能力"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button><div id="capability-body"><h2 id="capability-title">员工能力</h2><p>内容创作：短视频脚本、分镜、口播稿、电商文案。</p></div></dialog>
   <div class="chat-toast" id="chat-toast" role="status" aria-live="polite" hidden></div>
-  <noscript><div class="noscript-notice">当前仍可阅读页面。启用 JavaScript 后，可体验员工切换、示例对话和本地附件。</div></noscript>
+  <noscript><div class="noscript-notice">启用 JavaScript 后可使用对话输入和附件选择。</div></noscript>
 </body>
 </html>

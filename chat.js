@@ -87,7 +87,7 @@
       var row = textElement("div", "reference-file");
       row.appendChild(fileIcon());
       var copy = textElement("span", "", file.name);
-      copy.appendChild(textElement("small", "", "本地文件 · 未上传"));
+      copy.appendChild(textElement("small", "", "待连接"));
       row.appendChild(copy);
       holder.appendChild(row);
     });
@@ -107,7 +107,6 @@
     var article = textElement("article", "message " + (sender === "user" ? "message-user" : "message-assistant"));
     var meta = textElement("div", "message-meta");
     meta.appendChild(textElement("span", "message-author", sender === "user" ? "你" : employee.name));
-    if (sender !== "user") meta.appendChild(textElement("span", "example-badge", "交互示例"));
     article.appendChild(meta);
     if (text) {
       var body = textElement("div", "message-content");
@@ -127,13 +126,6 @@
     messages.appendChild(article);
   }
 
-  function exampleReply(hasText, files) {
-    if (!hasText && files.length) return "参考文件已列在右侧。这里仅展示文件名，不会读取内容。你可以继续说说希望完成的工作，以及希望得到什么成果。";
-    var reply = "这条需求已保留在右侧的「需求原文」中。为便于明确工作，可以继续补充" + profile.preparation + "。";
-    if (files.length) reply += "\n\n你添加的文件只展示名称，当前不会读取或分析文件内容。";
-    return reply;
-  }
-
   function scrollToLatest() {
     window.requestAnimationFrame(function () {
       scrollArea.scrollTo({ top: scrollArea.scrollHeight, behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
@@ -141,7 +133,10 @@
   }
 
   function updateProfile() {
-    document.title = employee.name + " · 员工试用 · 智能体集市";
+    var scenarioNames = { marketing: "AI营销视频生成", reports: "AI生成汇报", images: "AI生成图片", templates: "名片、喜报与排行榜", custom: "自定义协作场景" };
+    var scenarioName = scenarioNames[params.get("scene")];
+    document.title = (scenarioName || employee.name) + " · AgentWan";
+    if (scenarioName) document.querySelector(".eyebrow").textContent = scenarioName;
     document.getElementById("employee-name").textContent = employee.name;
     document.getElementById("employee-mark").textContent = profile.mark;
     document.getElementById("welcome-author").textContent = employee.name;
@@ -177,7 +172,7 @@
     employee.deliverables.forEach(function (item) { list.appendChild(textElement("li", "", item)); });
     scope.appendChild(list);
     var price = textElement("div", "capability-price");
-    price.appendChild(textElement("span", "", "原型参考价"));
+    price.appendChild(textElement("span", "", "服务参考价"));
     price.appendChild(textElement("strong", "", "¥" + employee.price + " / " + employee.unit));
     scope.appendChild(price);
     columns.appendChild(scope);
@@ -187,7 +182,6 @@
     preparation.appendChild(textElement("p", "preparation-note", "可以先描述一项具体工作，资料不完整时再继续补充。"));
     columns.appendChild(preparation);
     holder.appendChild(columns);
-    holder.appendChild(textElement("p", "capability-note", "当前仅展示员工服务范围。具体技能、工具授权、试用条件与计费边界待正式确认。"));
   }
 
   document.getElementById("starter-prompts").addEventListener("click", function (event) {
@@ -245,7 +239,7 @@
     updatePendingFiles();
     updateRequirement();
     updateReferences();
-    appendMessage("assistant", exampleReply(Boolean(text), files));
+    notify("消息已记录在当前页面");
     scrollToLatest();
     input.focus();
   });

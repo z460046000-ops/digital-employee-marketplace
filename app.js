@@ -36,6 +36,7 @@
         selectedScope = link.dataset.nav === "featured" ? "featured" : "all";
         selectedCategory = "all";
         if (search) search.value = "";
+        document.dispatchEvent(new CustomEvent("market:show-agents"));
         applyFilters();
       }
     });
@@ -44,6 +45,8 @@
     var current = window.location.hash;
     setNavigation(current === "#how-it-works" ? "guide" : current === "#featured" ? "featured" : "discover");
     if (current !== "#how-it-works") {
+      if (search) search.value = "";
+      document.dispatchEvent(new CustomEvent("market:show-agents"));
       selectedScope = current === "#featured" ? "featured" : "all";
       selectedCategory = "all";
       applyFilters();
@@ -51,6 +54,11 @@
   }
   window.addEventListener("hashchange", navigationFromHash);
   navigationFromHash();
+
+  function markDirectoryScope() {
+    setNavigation("discover");
+    if (window.location.hash === "#featured") window.history.replaceState(null, "", "#employees");
+  }
 
   function escapeHtml(value) {
     return String(value == null ? "" : value).replace(/[&<>"']/g, function (character) {
@@ -110,7 +118,7 @@
   function resetFilters() {
     selectedCategory = "all";
     selectedScope = "all";
-    setNavigation("discover");
+    markDirectoryScope();
     if (search) search.value = "";
     applyFilters();
     if (search) search.focus();
@@ -214,8 +222,7 @@
         return '<li>' + escapeHtml(item) + '</li>';
       }).join("") + '</ul></section>' +
       '<section class="profile-section"><h3>协作方式</h3><div class="profile-workflow"><span>描述需求</span><span>确认范围</span><span>查看成果</span></div></section>' +
-      '<details class="profile-environment"><summary>工具与资料说明</summary><p>知识资料、工具连接与技能授权将在真实员工接入后展示。当前是页面预览，不代表已获得相应授权。</p></details>' +
-      '<p class="dialog-note">参考价格与计价单位以正式服务说明为准。免费试用将进入员工对话预览。</p></div></div>',
+      '</div></div>',
       "profile"
     );
   }
@@ -226,31 +233,17 @@
 
   function showPurchase(role) {
     showDialog(
-      titleMarkup("确认服务", "确认员工与计价方式，再预览订单概览。") +
-      roleSummary(role) + '<h3>服务范围</h3>' + deliverableList(role) +
-      '<div class="dialog-callout">当前不会创建真实订单，也不会扣款。服务范围、计费边界及支付方式待正式接入。</div>' +
-      '<div class="dialog-actions">' + roleButton(role, "order-preview", "预览订单", "button button-primary") +
-      roleButton(role, "details", "返回服务详情", "button button-secondary") + '</div>'
-    );
-  }
-
-  function showOrderPreview(role) {
-    showDialog(
-      titleMarkup("订单预览", "以下是当前选择的服务概览，尚未创建真实订单。") +
-      '<dl class="order-preview"><div><dt>服务员工</dt><dd>' + escapeHtml(role.name) + '</dd></div>' +
-      '<div><dt>参考价格</dt><dd>' + escapeHtml(priceText(role)) + '</dd></div>' +
-      '<div><dt>计价单位</dt><dd>按' + escapeHtml(role.unit) + '计价</dd></div>' +
-      '<div><dt>当前状态</dt><dd>仅供预览，未下单</dd></div></dl>' +
-      '<p class="dialog-note">单个计价单位对应的工作量、月度额度等条件仍需确认。此处不计算订单金额。</p>' +
-      '<div class="dialog-actions"><button type="button" class="button button-primary" data-close-dialog>继续浏览员工</button>' +
-      roleButton(role, "buy", "返回确认", "button button-secondary") + '</div>'
+      titleMarkup("确认服务", role.description) +
+      roleSummary(role) + '<h3>服务内容</h3>' + deliverableList(role) +
+      '<div class="dialog-actions"><button class="button button-primary" type="button" disabled>暂未开放购买</button>' +
+      roleButton(role, "details", "返回员工介绍", "button button-secondary") + '</div>'
     );
   }
 
   function showAccount() {
     showDialog(
-      titleMarkup("我的工作台", "此处展示账号入口的预览说明。") +
-      '<div class="dialog-callout">当前页面尚未连接账号系统。登录、订单和工作台内容需在正式服务中查看。</div>' +
+      titleMarkup("我的工作台", "登录后查看工作记录、项目与订单。") +
+      '<div class="dialog-callout">账号登录暂未开放</div>' +
       '<div class="dialog-actions"><button type="button" class="button button-primary" data-close-dialog>继续浏览</button></div>'
     );
   }
@@ -264,8 +257,8 @@
     showDialog(
       titleMarkup("如何选择服务", "先找到适合的员工，再确认交付范围与计价方式。") +
       '<ol class="dialog-deliverables"><li>通过分类或搜索找到员工，查看服务详情。</li>' +
-      '<li>选择免费试用，填写希望完成的工作。</li><li>确认计价单位后，预览购买流程。</li></ol>' +
-      '<p class="dialog-note">本页面用于体验交互流程，不会发送需求、创建订单或扣款。</p>'
+      '<li>选择免费试用，填写希望完成的工作。</li><li>确认服务内容与计价方式。</li></ol>' +
+      ""
     );
   }
 
@@ -274,17 +267,17 @@
       var button = event.target.closest("button[data-category]");
       if (!button || !filters.contains(button)) return;
       selectedScope = "all";
-      setNavigation("discover");
+      markDirectoryScope();
       selectedCategory = categoryValue(button.dataset.category);
       applyFilters();
     });
   }
-  if (search) search.addEventListener("input", function () { selectedScope = "all"; setNavigation("discover"); applyFilters(); });
+  if (search) search.addEventListener("input", function () { selectedScope = "all"; markDirectoryScope(); applyFilters(); });
   if (reset) reset.addEventListener("click", resetFilters);
 
   document.addEventListener("click", function (event) {
     var browseLink = event.target.closest('a[href="#employees"]');
-    if (browseLink) { selectedScope = "all"; selectedCategory = "all"; if (search) search.value = ""; setNavigation("discover"); applyFilters(); }
+    if (browseLink) { document.dispatchEvent(new CustomEvent("market:show-agents")); selectedScope = "all"; selectedCategory = "all"; if (search) search.value = ""; setNavigation("discover"); applyFilters(); }
     var closeButton = event.target.closest("[data-close-dialog]");
     if (closeButton) {
       event.preventDefault();
@@ -305,7 +298,7 @@
       showGuide();
       return;
     }
-    if (!["details", "trial", "buy", "order-preview"].includes(action)) return;
+    if (!["details", "trial", "buy"].includes(action)) return;
     event.preventDefault();
     var role = catalogById.get(control.dataset.role);
     if (!role) {
@@ -315,7 +308,6 @@
     if (action === "details") showDetails(role);
     if (action === "trial") showTrial(role);
     if (action === "buy") showPurchase(role);
-    if (action === "order-preview") showOrderPreview(role);
   });
 
   if (dialog) {

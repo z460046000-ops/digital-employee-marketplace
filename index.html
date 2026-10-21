@@ -14,7 +14,7 @@
 <a class="skip-link" href="#employees">跳转到员工目录</a>
 <header class="site-header">
   <a class="wordmark" href="#hero" aria-label="智能体集市首页">智能体集市</a>
-  <nav class="main-nav" aria-label="主导航"><a href="#employees">发现员工</a><a href="#employees">精选服务</a><a href="#how-it-works">使用指南</a></nav>
+  <nav class="main-nav" aria-label="主导航"><a href="#employees" data-nav="discover" class="is-active" aria-current="location">发现员工</a><a href="#featured" data-nav="featured">精选服务</a><a href="#how-it-works" data-nav="guide">使用指南</a></nav>
   <div class="account-nav"><button data-action="account">我的工作台</button><span class="nav-divider" aria-hidden="true"></span><button class="login-button" data-action="account">登录 / 注册</button></div>
 </header>
 <main>
@@ -29,7 +29,7 @@
     </div>
   </section>
   <section class="catalog-section" id="employees" aria-labelledby="catalog-title">
-    <div class="catalog-heading" data-reveal><h2 id="catalog-title">找到适合这项工作的员工</h2><label class="search-wrap"><span class="sr-only">搜索员工或工作内容</span><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4 4"/></svg><input type="search" id="role-search" placeholder="搜索员工或工作内容" autocomplete="off"></label></div>
+    <span class="section-anchor" id="featured" aria-hidden="true"></span><div class="catalog-heading" data-reveal><h2 id="catalog-title">找到合适的数字员工</h2><label class="search-wrap"><span class="sr-only">搜索员工或工作内容</span><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4 4"/></svg><input type="search" id="role-search" placeholder="搜索员工或工作内容" autocomplete="off"></label></div>
     <div class="catalog-toolbar"><div class="category-filters" id="category-filters" role="group" aria-label="按服务类型筛选"><button type="button" data-category="all" class="is-active" aria-pressed="true">推荐</button><button type="button" data-category="内容创作" class="" aria-pressed="false">内容创作</button><button type="button" data-category="设计" class="" aria-pressed="false">设计</button><button type="button" data-category="财税" class="" aria-pressed="false">财税</button><button type="button" data-category="法务" class="" aria-pressed="false">法务</button><button type="button" data-category="开发" class="" aria-pressed="false">开发</button><button type="button" data-category="翻译" class="" aria-pressed="false">翻译</button><button type="button" data-category="营销" class="" aria-pressed="false">营销</button><button type="button" data-category="数据" class="" aria-pressed="false">数据</button><button type="button" data-category="客服" class="" aria-pressed="false">客服</button></div><p class="result-count" id="result-count" aria-live="polite">8 位员工</p></div>
     <div class="role-grid" id="role-grid"><article class="role-card" data-category="内容创作" data-name="内容创作" data-description="短视频脚本、分镜、口播稿、电商文案">
   <button class="role-cover cover-content" data-action="details" data-role="content" aria-label="了解内容创作"><img src="assets/work-content.jpg" alt="内容创作工作素材" width="480" height="360" loading="eager" decoding="async"></button>

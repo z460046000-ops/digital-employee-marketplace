@@ -14,9 +14,43 @@
   var dialogBody = document.getElementById("dialog-body");
   var toast = document.getElementById("toast");
   var selectedCategory = "all";
+  var selectedScope = "all";
+  var navLinks = Array.from(document.querySelectorAll(".main-nav [data-nav]"));
   var previousFocus = null;
   var toastTimer = null;
   var fallbackDialog = false;
+
+  function setNavigation(active) {
+    navLinks.forEach(function (link) {
+      var selected = link.dataset.nav === active;
+      link.classList.toggle("is-active", selected);
+      if (selected) link.setAttribute("aria-current", "location");
+      else link.removeAttribute("aria-current");
+    });
+  }
+
+  navLinks.forEach(function (link) {
+    link.addEventListener("click", function () {
+      setNavigation(link.dataset.nav);
+      if (link.dataset.nav !== "guide") {
+        selectedScope = link.dataset.nav === "featured" ? "featured" : "all";
+        selectedCategory = "all";
+        if (search) search.value = "";
+        applyFilters();
+      }
+    });
+  });
+  function navigationFromHash() {
+    var current = window.location.hash;
+    setNavigation(current === "#how-it-works" ? "guide" : current === "#featured" ? "featured" : "discover");
+    if (current === "#featured") {
+      selectedScope = "featured";
+      selectedCategory = "all";
+      applyFilters();
+    }
+  }
+  window.addEventListener("hashchange", navigationFromHash);
+  navigationFromHash();
 
   function escapeHtml(value) {
     return String(value == null ? "" : value).replace(/[&<>"']/g, function (character) {
@@ -52,7 +86,8 @@
     grid.querySelectorAll(".role-card").forEach(function (card) {
       var categoryMatches = selectedCategory === "all" || card.dataset.category === selectedCategory;
       var searchableText = [card.dataset.name, card.dataset.description, card.dataset.category].join(" ").toLocaleLowerCase("zh-CN");
-      var matches = categoryMatches && (!query || searchableText.includes(query));
+      var scopeMatches = selectedScope !== "featured" || ["content", "design", "finance"].includes(card.querySelector("[data-role]")?.dataset.role);
+      var matches = scopeMatches && categoryMatches && (!query || searchableText.includes(query));
       card.hidden = !matches;
       if (matches) visibleCount += 1;
     });
@@ -74,6 +109,8 @@
 
   function resetFilters() {
     selectedCategory = "all";
+    selectedScope = "all";
+    setNavigation("discover");
     if (search) search.value = "";
     applyFilters();
     if (search) search.focus();
@@ -236,14 +273,18 @@
     filters.addEventListener("click", function (event) {
       var button = event.target.closest("button[data-category]");
       if (!button || !filters.contains(button)) return;
+      selectedScope = "all";
+      setNavigation("discover");
       selectedCategory = categoryValue(button.dataset.category);
       applyFilters();
     });
   }
-  if (search) search.addEventListener("input", applyFilters);
+  if (search) search.addEventListener("input", function () { selectedScope = "all"; setNavigation("discover"); applyFilters(); });
   if (reset) reset.addEventListener("click", resetFilters);
 
   document.addEventListener("click", function (event) {
+    var browseLink = event.target.closest('a[href="#employees"]');
+    if (browseLink) { selectedScope = "all"; selectedCategory = "all"; if (search) search.value = ""; setNavigation("discover"); applyFilters(); }
     var closeButton = event.target.closest("[data-close-dialog]");
     if (closeButton) {
       event.preventDefault();

@@ -18,6 +18,9 @@
   var previousFocus;
   var composing = false;
   var scenes = window.marketplaceScenes || [];
+  // 仅用于展示额度状态；本机消息不扣额度，不代表 Token 的正式换算。
+  var previewQuota = { total: 1000, remaining: new URLSearchParams(window.location.search).get("quota") === "empty" ? 0 : 860 };
+  var lastMarketView = "agents";
   var originalExampleMessages = new Set();
   (window.WorkspaceExamples.conversations || []).forEach(function (item) {
     item.messages.forEach(function (message) { originalExampleMessages.add(message.id); });
@@ -74,7 +77,31 @@
   }
 
   function updateSend() {
-    $("drawer-send").disabled = !input.value.trim() && pendingFiles.length === 0;
+    $("drawer-send").disabled = previewQuota.remaining <= 0 || (!input.value.trim() && pendingFiles.length === 0);
+  }
+
+  function renderQuota() {
+    var exhausted = previewQuota.remaining <= 0;
+    $("drawer-quota-value").textContent = previewQuota.remaining.toLocaleString("zh-CN");
+    $("drawer-quota-total").textContent = previewQuota.total.toLocaleString("zh-CN");
+    $("drawer-quota").classList.toggle("is-empty", exhausted);
+    $("drawer-quota-note").textContent = exhausted ? "免费额度已用完，充值后继续使用。" : "平台内所有数字员工通用";
+    $("drawer-credit-cta").textContent = exhausted ? "充值继续使用" : "额度说明";
+    $("composer-hint").textContent = exhausted ? "当前输入会保留" : "Enter 发送 · Shift + Enter 换行";
+    updateSend();
+  }
+
+  function showRecharge() {
+    $("recharge-panel").hidden = false;
+    $("drawer-credit-cta").setAttribute("aria-expanded", "true");
+    $("drawer-scroll").scrollTop = 0;
+    $("recharge-close").focus({ preventScroll: true });
+  }
+
+  function hideRecharge(restoreFocus) {
+    $("recharge-panel").hidden = true;
+    $("drawer-credit-cta").setAttribute("aria-expanded", "false");
+    if (restoreFocus) $("drawer-credit-cta").focus({ preventScroll: true });
   }
 
   function renderPending() {
@@ -166,6 +193,8 @@
     });
     $("drawer-status").classList.remove("is-error");
     $("drawer-status").textContent = next && next.isExample ? "示例对话 · 新输入仅保存在本机" : "当前消息保存在本机，数字员工尚未连接。";
+    hideRecharge(false);
+    renderQuota();
     renderPending();
     renderMessages();
     if (!drawer.open) {
@@ -210,19 +239,11 @@
       title.type = "button";
       copy.appendChild(title);
       copy.appendChild(node("p", "role-description", employee.description));
-      var price = node("p", "role-price");
-      price.appendChild(node("span", "currency", "¥"));
-      price.appendChild(document.createTextNode(String(employee.price)));
-      price.appendChild(node("span", "unit", "/" + employee.unit));
-      copy.appendChild(price);
+      copy.appendChild(node("p", "role-allowance", "免费额度开用 · 平台额度通用"));
       var actions = node("div", "role-actions");
-      var trial = node("button", "button button-primary", "免费试用");
+      var trial = node("button", "button button-primary", "开始使用");
       trial.type = "button";
       actions.appendChild(trial);
-      var purchase = node("button", "button button-secondary", "购买");
-      purchase.type = "button";
-      purchase.dataset.purchase = employee.id;
-      actions.appendChild(purchase);
       copy.appendChild(actions);
       card.appendChild(copy);
       $("role-grid").appendChild(card);
@@ -279,7 +300,7 @@
       $("workspace-total").textContent = String(records.length);
       var usage = store.getUsageSummary();
       $("workspace-token").textContent = usage.totalTokens == null ? "—" : usage.totalTokens.toLocaleString("zh-CN");
-      $("workspace-quota").textContent = usage.remainingQuota == null ? "—" : usage.remainingQuota.toLocaleString("zh-CN");
+      $("workspace-quota").textContent = previewQuota.remaining.toLocaleString("zh-CN");
       $("history-list").replaceChildren();
       records.forEach(function (item) {
         var employee = byId.get(item.employeeId);
@@ -304,13 +325,15 @@
     if (!["agents", "scenes", "workspace"].includes(view)) return;
     $("marketplace-tabs").hidden = view === "workspace";
     $("workspace-heading").hidden = view !== "workspace";
+    if (view !== "workspace") lastMarketView = view;
+    document.querySelector(".workspace-back").dataset.view = lastMarketView;
     document.querySelectorAll("[data-view]").forEach(function (button) {
       var selected = button.dataset.view === view;
       button.classList.toggle("is-active", selected);
       if (button.getAttribute("role") === "tab") {
         button.setAttribute("aria-selected", String(selected));
         button.tabIndex = selected ? 0 : -1;
-      } else button.setAttribute("aria-pressed", String(selected));
+      } else if (button.dataset.view === "workspace") button.setAttribute("aria-pressed", String(selected));
     });
     ["agents", "scenes", "workspace"].forEach(function (name) { $("view-" + name).hidden = name !== view; });
     $("view-description").textContent = {
@@ -343,10 +366,12 @@
   });
 
   document.addEventListener("click", function (event) {
-    var purchase = event.target.closest("[data-purchase]");
-    if (purchase) { toast("购买暂未开放，可以先免费试用。"); return; }
     var view = event.target.closest("[data-view]");
-    if (view) { showView(view.dataset.view); return; }
+    if (view) {
+      showView(view.dataset.view);
+      if (view.classList.contains("workspace-back")) $("tab-" + lastMarketView).focus({ preventScroll: true });
+      return;
+    }
     var card = event.target.closest("[data-employee]");
     if (card) { openEmployee(card.dataset.employee, card.dataset.scene, card.dataset.conversation); return; }
     var filter = event.target.closest("[data-category]");
@@ -362,8 +387,15 @@
   $("role-search").addEventListener("input", renderCatalog);
   if ($("scene-search")) $("scene-search").addEventListener("input", renderScenes);
   $("drawer-close").addEventListener("click", closeDrawer);
+  $("drawer-credit-cta").addEventListener("click", showRecharge);
+  $("recharge-close").addEventListener("click", function () { hideRecharge(true); });
+  $("recharge-back").addEventListener("click", function () { hideRecharge(true); });
   if ($("drawer-new")) $("drawer-new").addEventListener("click", function () { if (active) openEmployee(active.id, activeScene ? activeScene.id : null, null, true); });
-  drawer.addEventListener("cancel", function (event) { event.preventDefault(); closeDrawer(); });
+  drawer.addEventListener("cancel", function (event) {
+    event.preventDefault();
+    if (!$("recharge-panel").hidden) { hideRecharge(true); return; }
+    closeDrawer();
+  });
   drawer.addEventListener("close", function () {
     document.body.classList.remove("drawer-open");
     updateRoute();
@@ -394,6 +426,7 @@
   });
   $("drawer-form").addEventListener("submit", function (event) {
     event.preventDefault();
+    if (previewQuota.remaining <= 0) { showRecharge(); return; }
     if (!active || (!input.value.trim() && pendingFiles.length === 0) || !saveDraft()) return;
     try {
       if (!conversation) conversation = store.createConversation({ employeeId: active.id, sceneId: activeScene ? activeScene.id : null });

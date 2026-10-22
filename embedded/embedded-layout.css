@@ -43,11 +43,9 @@
 .quota-demo-controls { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 0 1px 10px; font-size: 10px; color: #95859f; }
 .quota-demo-controls > div { display: flex; gap: 9px; }
 .quota-demo-controls button { min-height: 30px; padding: 4px 7px; border: 1px solid #ece7f1; border-radius: 5px; background: #faf8fc; color: #82708d; font-size: 10px; white-space: nowrap; }
-.quota-exhausted { margin-top: 22px; padding: 18px; border: 1px solid #e5def0; border-radius: 10px; background: #faf7ff; }
-.quota-exhausted > strong { font-size: 13px; font-weight: 600; }
-.quota-exhausted > p { margin: 10px 0 14px; font-size: 12px; color: #82718f; }
-.quota-exhausted > small { display: block; margin-top: 11px; font-size: 10px; line-height: 1.7; color: #94839f; }
-.legacy-link { display: inline-flex; align-items: center; min-height: 38px; padding: 9px 13px; border-radius: 7px; background: var(--brand); color: white; font-size: 12px; text-decoration: none; }
+.quota-exhausted { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; margin-top: 12px; padding: 8px 0 0; border-top: 1px solid #eee9f2; }
+.quota-exhausted > strong { font-size: 11px; font-weight: 500; color: #94839f; }
+.workspace-link { display: inline-flex; align-items: center; min-height: 32px; color: var(--brand); font-size: 12px; line-height: 1.6; text-decoration: none; }
 .recharge-panel .credit-button { margin-left: 8px; background: #eee8f6; color: #736080; }
 .drawer-status { color: #7b7284; }
 .drawer-status.is-error { color: #a04f3c; }

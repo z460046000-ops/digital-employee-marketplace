@@ -85,7 +85,7 @@
     $("drawer-quota-value").textContent = previewQuota.remaining.toLocaleString("zh-CN");
     $("drawer-quota-total").textContent = previewQuota.total.toLocaleString("zh-CN");
     $("drawer-quota").classList.toggle("is-empty", exhausted);
-    $("drawer-quota-note").textContent = exhausted ? "演示额度已用完，可前往旧版继续体验。" : "每次发送模拟扣 10 点，还可发送 " + (previewQuota.remaining / previewQuota.perMessage) + " 次";
+    $("drawer-quota-note").textContent = exhausted ? "演示额度已用完，可前往workspace体验完整功能。" : "每次发送模拟扣 10 点，还可发送 " + (previewQuota.remaining / previewQuota.perMessage) + " 次";
     $("quota-exhausted").hidden = !exhausted;
     $("drawer-credit-cta").textContent = exhausted ? "充值继续使用" : "额度说明";
     $("composer-hint").textContent = exhausted ? "当前输入会保留" : "Enter 发送 · Shift + Enter 换行";

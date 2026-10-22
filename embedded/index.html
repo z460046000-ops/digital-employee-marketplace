@@ -21,7 +21,7 @@
   <a class="skip-link" href="#marketplace-main">跳转到智能体集市</a>
   <header class="host-header">
     <div class="host-brand"><img src="assets/wdsheng/platform-logo.svg" width="137" height="56" alt="万大圣"></div>
-    <div class="host-account"><button type="button" data-view="workspace">我的工作台</button><span class="account-avatar" aria-hidden="true">企</span><span>雇主</span></div>
+    <div class="host-account"><button type="button" data-view="workspace" aria-controls="view-workspace">我的工作台</button><span class="account-avatar" aria-hidden="true">企</span><span>雇主</span></div>
   </header>
 
   <aside class="host-sidebar" aria-label="万大圣导航">
@@ -37,7 +37,8 @@
   </aside>
 
   <main class="marketplace-main host-main" id="marketplace-main">
-    <nav id="marketplace-tabs" class="market-tabs title-tabs" role="tablist" aria-label="切换工作内容"><button id="tab-agents" class="is-active" type="button" role="tab" data-view="agents" aria-selected="true" aria-controls="view-agents" tabindex="0">智能体集市</button><button id="tab-scenes" type="button" role="tab" data-view="scenes" aria-selected="false" aria-controls="view-scenes" tabindex="-1">场景集市</button><button id="tab-workspace" type="button" role="tab" data-view="workspace" aria-selected="false" aria-controls="view-workspace" tabindex="-1">我的工作台</button></nav>
+    <nav id="marketplace-tabs" class="market-tabs title-tabs" role="tablist" aria-label="切换集市"><button id="tab-agents" class="is-active" type="button" role="tab" data-view="agents" aria-selected="true" aria-controls="view-agents" tabindex="0">智能体集市</button><button id="tab-scenes" type="button" role="tab" data-view="scenes" aria-selected="false" aria-controls="view-scenes" tabindex="-1">场景集市</button></nav>
+    <div id="workspace-heading" class="workspace-heading" hidden><h1 id="workspace-title">我的工作台</h1><button type="button" class="workspace-back" data-view="agents">返回集市</button></div>
     <p id="view-description" class="view-description">找到合适的数字员工，点开就能开始工作。</p>
 
     <section id="view-agents" role="tabpanel" aria-labelledby="tab-agents">
@@ -49,7 +50,7 @@
 
     <section id="view-scenes" role="tabpanel" aria-labelledby="tab-scenes" hidden><div class="scenario-toolbar"><div class="category-filters scenario-filters" id="scene-filters" role="group" aria-label="按场景类型筛选"><button type="button" data-scene-category="all" class="is-active" aria-pressed="true">全部</button><button type="button" data-scene-category="sales" aria-pressed="false">销售增长</button></div><label class="search-wrap scenario-search"><svg viewbox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"></circle><path d="m16 16 4 4"></path></svg><span class="sr-only">搜索场景</span><input id="scene-search" type="search" aria-label="搜索场景" placeholder="搜索场景或工作内容" autocomplete="off"></label></div><p id="scene-result-count" class="scenario-result-count" aria-live="polite"></p><div id="scene-grid" class="scenario-grid"></div><p id="scene-empty" class="empty-state scenario-empty" hidden>暂时没有匹配的场景，试试其他关键词或分类。</p></section>
 
-    <section id="view-workspace" role="tabpanel" aria-labelledby="tab-workspace" hidden>
+    <section id="view-workspace" aria-labelledby="workspace-title" hidden>
       <div class="workspace-metrics"><div><span>对话记录</span><strong id="workspace-total">—</strong></div><div><span>累计使用 <small>示例用量</small></span><strong id="workspace-token">—</strong></div><div><span>剩余额度 <small>示例额度</small></span><strong id="workspace-quota">—</strong></div></div>
       <p class="workspace-note">用量与额度为示例，不代表真实账单；新对话仅保存在当前浏览器。</p>
       <div class="history-heading"><h3>最近对话</h3><span>点击继续</span></div><div id="history-list" class="history-list"></div>

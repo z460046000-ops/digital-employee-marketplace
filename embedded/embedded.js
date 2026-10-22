@@ -302,6 +302,8 @@
 
   function showView(view) {
     if (!["agents", "scenes", "workspace"].includes(view)) return;
+    $("marketplace-tabs").hidden = view === "workspace";
+    $("workspace-heading").hidden = view !== "workspace";
     document.querySelectorAll("[data-view]").forEach(function (button) {
       var selected = button.dataset.view === view;
       button.classList.toggle("is-active", selected);

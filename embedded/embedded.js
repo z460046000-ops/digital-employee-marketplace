@@ -18,8 +18,8 @@
   var previousFocus;
   var composing = false;
   var scenes = window.marketplaceScenes || [];
-  // 仅用于展示额度状态；本机消息不扣额度，不代表 Token 的正式换算。
-  var previewQuota = { total: 1000, remaining: new URLSearchParams(window.location.search).get("quota") === "empty" ? 0 : 860 };
+  // 只模拟本页扣点：50 点、每次发送 10 点，刷新或重置后恢复；不产生真实 Token 用量。
+  var previewQuota = { total: 50, remaining: new URLSearchParams(window.location.search).get("quota") === "empty" ? 0 : 50, perMessage: 10 };
   var lastMarketView = "agents";
   var originalExampleMessages = new Set();
   (window.WorkspaceExamples.conversations || []).forEach(function (item) {
@@ -85,10 +85,31 @@
     $("drawer-quota-value").textContent = previewQuota.remaining.toLocaleString("zh-CN");
     $("drawer-quota-total").textContent = previewQuota.total.toLocaleString("zh-CN");
     $("drawer-quota").classList.toggle("is-empty", exhausted);
-    $("drawer-quota-note").textContent = exhausted ? "免费额度已用完，充值后继续使用。" : "平台内所有数字员工通用";
+    $("drawer-quota-note").textContent = exhausted ? "演示额度已用完，可前往旧版继续体验。" : "每次发送模拟扣 10 点，还可发送 " + (previewQuota.remaining / previewQuota.perMessage) + " 次";
+    $("quota-exhausted").hidden = !exhausted;
     $("drawer-credit-cta").textContent = exhausted ? "充值继续使用" : "额度说明";
     $("composer-hint").textContent = exhausted ? "当前输入会保留" : "Enter 发送 · Shift + Enter 换行";
     updateSend();
+  }
+
+  function simulateEmptyQuota() {
+    if (!saveDraft()) return;
+    previewQuota.remaining = 0;
+    hideRecharge(false);
+    renderQuota();
+    renderWorkspace();
+    window.requestAnimationFrame(function () { $("drawer-scroll").scrollTop = $("drawer-scroll").scrollHeight; });
+  }
+
+  function resetDemoQuota() {
+    previewQuota.remaining = previewQuota.total;
+    var url = new URL(window.location.href);
+    url.searchParams.delete("quota");
+    window.history.replaceState(null, "", url);
+    hideRecharge(false);
+    renderQuota();
+    renderWorkspace();
+    toast("演示额度已恢复为 50 点，对话和草稿保留。");
   }
 
   function showRecharge() {
@@ -294,6 +315,31 @@
     });
   }
 
+  function employeeIcon(employeeId) {
+    var drawings = {
+      content: ["M5 4h9l5 5v11H5z", "M14 4v5h5M8 12h5M8 16h7"],
+      design: ["m12 3 8 8-6 9H6L3 12z", "m12 3 2 8-8 9M14 11l6 0", "M10 14h.01"],
+      finance: ["M4 4h16v16H4z", "M8 15v2M12 11v6M16 7v10"],
+      qualification: ["M8 15 6 22l6-3 6 3-2-7", "M12 3a7 7 0 1 0 0 14 7 7 0 0 0 0-14", "m9 10 2 2 4-4"],
+      legal: ["M5 3h10l4 4v14H5z", "M15 3v5h4M8 12h8M8 16h5"],
+      development: ["m8 6-6 6 6 6M16 6l6 6-6 6M14 4l-4 16"],
+      translation: ["M3 5h11M8 3v2M5 8c1 4 4 7 8 9M12 5c0 5-4 10-9 12", "m14 20 4-10 4 10M15.5 17h5"],
+      live: ["M4 7h12v12H4z", "m9 10 4 3-4 3zM19 8c2 3 2 7 0 10M18 3l1 2M6 3l-1 2"]
+    };
+    var type = drawings[employeeId] ? employeeId : "content";
+    var avatar = node("span", "history-avatar history-avatar--" + type);
+    avatar.setAttribute("aria-hidden", "true");
+    var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    svg.setAttribute("viewBox", "0 0 24 24");
+    drawings[type].forEach(function (drawing) {
+      var path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+      path.setAttribute("d", drawing);
+      svg.appendChild(path);
+    });
+    avatar.appendChild(svg);
+    return avatar;
+  }
+
   function renderWorkspace() {
     try {
       var records = store.listConversations();
@@ -310,9 +356,22 @@
         row.dataset.employee = item.employeeId;
         row.dataset.conversation = item.id;
         if (item.sceneId) row.dataset.scene = item.sceneId;
-        row.appendChild(node("strong", "", item.title));
-        row.appendChild(node("small", "", employee.name + " · " + (item.isExample ? "示例对话" : item.messages.length ? "本机记录 · 未连接" : "本机草稿")));
-        row.appendChild(node("span", "", "继续对话 →"));
+        var recentUserMessage = item.messages.slice().reverse().find(function (message) { return message.role === "user"; });
+        var preview = item.draft.trim() || (recentUserMessage && (recentUserMessage.text.trim() || (recentUserMessage.files[0] && recentUserMessage.files[0].name))) || item.title;
+        preview = preview.replace(/\s+/g, " ");
+        row.setAttribute("aria-label", employee.name + "，" + preview + "，继续对话");
+        row.appendChild(employeeIcon(employee.id));
+        var copy = node("span", "history-copy");
+        copy.appendChild(node("strong", "history-employee-name", employee.name));
+        copy.appendChild(node("span", "history-preview", preview));
+        var meta = node("small", "history-meta");
+        meta.appendChild(node("span", "", item.isExample ? "示例对话" : item.messages.length ? "本机记录 · 未连接" : "本机草稿 · 未连接"));
+        var time = node("time", "history-time", new Date(item.updatedAt).toLocaleString("zh-CN", { timeZone: "Asia/Shanghai", month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit", hour12: false }));
+        time.setAttribute("datetime", item.updatedAt);
+        meta.appendChild(time);
+        copy.appendChild(meta);
+        row.appendChild(copy);
+        row.appendChild(node("span", "history-open", "继续 →"));
         $("history-list").appendChild(row);
       });
     } catch (error) {
@@ -388,6 +447,8 @@
   if ($("scene-search")) $("scene-search").addEventListener("input", renderScenes);
   $("drawer-close").addEventListener("click", closeDrawer);
   $("drawer-credit-cta").addEventListener("click", showRecharge);
+  $("quota-simulate-empty").addEventListener("click", simulateEmptyQuota);
+  $("quota-reset").addEventListener("click", resetDemoQuota);
   $("recharge-close").addEventListener("click", function () { hideRecharge(true); });
   $("recharge-back").addEventListener("click", function () { hideRecharge(true); });
   if ($("drawer-new")) $("drawer-new").addEventListener("click", function () { if (active) openEmployee(active.id, activeScene ? activeScene.id : null, null, true); });
@@ -431,12 +492,15 @@
     try {
       if (!conversation) conversation = store.createConversation({ employeeId: active.id, sceneId: activeScene ? activeScene.id : null });
       conversation = store.addMessage(conversation.id, { text: input.value, files: pendingFiles });
+      previewQuota.remaining = Math.max(0, previewQuota.remaining - previewQuota.perMessage);
       input.value = "";
       pendingFiles = [];
       remember();
       renderPending();
       renderMessages();
-      $("drawer-status").textContent = "消息已保存在本机，数字员工尚未连接。";
+      renderQuota();
+      renderWorkspace();
+      $("drawer-status").textContent = "已模拟扣除 10 点 · 消息仅存本机，未产生真实费用或 Token 用量。";
       updateRoute();
     } catch (error) { storageError(error); }
   });

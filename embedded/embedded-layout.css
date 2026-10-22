@@ -40,6 +40,15 @@
 .recharge-preview strong { font-size: 12px; font-weight: 500; }
 .recharge-preview p { margin: 8px 0; font-size: 12px; }
 .recharge-preview small { font-size: 10px; color: #8b7d99; line-height: 1.7; }
+.quota-demo-controls { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 0 1px 10px; font-size: 10px; color: #95859f; }
+.quota-demo-controls > div { display: flex; gap: 9px; }
+.quota-demo-controls button { min-height: 30px; padding: 4px 7px; border: 1px solid #ece7f1; border-radius: 5px; background: #faf8fc; color: #82708d; font-size: 10px; white-space: nowrap; }
+.quota-exhausted { margin-top: 22px; padding: 18px; border: 1px solid #e5def0; border-radius: 10px; background: #faf7ff; }
+.quota-exhausted > strong { font-size: 13px; font-weight: 600; }
+.quota-exhausted > p { margin: 10px 0 14px; font-size: 12px; color: #82718f; }
+.quota-exhausted > small { display: block; margin-top: 11px; font-size: 10px; line-height: 1.7; color: #94839f; }
+.legacy-link { display: inline-flex; align-items: center; min-height: 38px; padding: 9px 13px; border-radius: 7px; background: var(--brand); color: white; font-size: 12px; text-decoration: none; }
+.recharge-panel .credit-button { margin-left: 8px; background: #eee8f6; color: #736080; }
 .drawer-status { color: #7b7284; }
 .drawer-status.is-error { color: #a04f3c; }
 .host-brand > img { width: 137px; height: auto; }
@@ -58,4 +67,29 @@
   .host-main .role-grid, .host-main .scenario-grid { grid-template-columns: 1fr; }
   .host-main .category-filters { margin-right: 0; max-width: 100%; padding-right: 0; }
   .host-brand > img { width: 120px; }
+}
+
+/* 最近对话：独立员工图标、名称与对话摘要。 */
+#history-list .history-row { display: grid; grid-template-columns: 44px minmax(0, 1fr) auto; align-items: center; gap: 15px; padding: 21px 3px; }
+#history-list .history-avatar { display: grid; place-items: center; width: 44px; height: 44px; margin: 0; border-radius: 12px; background: #eee9ff; color: #7860c7; }
+#history-list .history-avatar svg { width: 25px; height: 25px; stroke-width: 1.65; }
+#history-list .history-avatar--design { background: #fcebee; color: #bf7187; }
+#history-list .history-avatar--finance { background: #e5f2ec; color: #538c72; }
+#history-list .history-avatar--qualification { background: #fcf0dd; color: #b38a48; }
+#history-list .history-avatar--legal { background: #e8effa; color: #6483b7; }
+#history-list .history-avatar--development { background: #e8f1f1; color: #52898c; }
+#history-list .history-avatar--translation { background: #f1ebfa; color: #9574b4; }
+#history-list .history-avatar--live { background: #fceee7; color: #ba8062; }
+#history-list .history-copy { display: block; min-width: 0; margin: 0; white-space: normal; }
+#history-list .history-employee-name { display: block; color: #292631; font-size: 15px; font-weight: 600; line-height: 1.6; }
+#history-list .history-preview { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; margin: 4px 0 7px; color: #5f5869; font-size: 13px; line-height: 1.65; white-space: normal; overflow-wrap: anywhere; }
+#history-list .history-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 14px; color: #9a91a3; font-size: 10px; line-height: 1.6; white-space: normal; }
+#history-list .history-time { color: #aaa1b2; }
+#history-list .history-open { margin: 0 0 0 12px; color: #9c91a6; font-size: 11px; font-weight: 400; white-space: nowrap; }
+@media (max-width: 700px) {
+  #history-list .history-row { grid-template-columns: 40px minmax(0, 1fr) auto; gap: 11px; padding: 18px 0; }
+  #history-list .history-avatar { width: 40px; height: 40px; border-radius: 11px; }
+  #history-list .history-employee-name { font-size: 14px; }
+  #history-list .history-preview { font-size: 12px; }
+  #history-list .history-open { margin-left: 0; font-size: 10px; }
 }

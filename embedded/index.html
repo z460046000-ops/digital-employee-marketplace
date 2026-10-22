@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#f5f5f8">
+  <meta name="description" content="在智能体集市找到合适的数字员工，直接开始工作。">
+  <title>智能体集市 · 万大圣</title>
+  <link rel="icon" href="assets/wdsheng/favicon.ico">
+  <link rel="stylesheet" href="embedded.css">
+  <link rel="stylesheet" href="legacy-market.css">
+  <link rel="stylesheet" href="legacy-scenes.css">
+  <link rel="stylesheet" href="embedded-layout.css">
+  <script src="catalog.js" defer></script>
+  <script src="workspace-examples.js" defer></script>
+  <script src="embedded-store.js" defer></script>
+  <script src="scene-catalog.js" defer></script>
+  <script src="embedded.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#marketplace-main">跳转到智能体集市</a>
+  <header class="host-header">
+    <div class="host-brand"><img src="assets/wdsheng/platform-logo.svg" width="137" height="56" alt="万大圣"></div>
+    <div class="host-account"><button type="button" data-view="workspace">我的工作台</button><span class="account-avatar" aria-hidden="true">企</span><span>雇主</span></div>
+  </header>
+
+  <aside class="host-sidebar" aria-label="万大圣导航">
+    <ul class="host-menu">
+      <li class="host-menu-item"><img class="host-menu-icon" src="assets/wdsheng/nav-home.svg" alt=""><span>首页</span></li>
+      <li class="host-menu-item"><img class="host-menu-icon" src="assets/wdsheng/nav-chat.svg" alt=""><span>对话</span></li>
+      <li class="host-menu-item is-current" aria-current="page"><svg viewbox="0 0 24 24" aria-hidden="true"><rect x="4" y="7" width="16" height="13" rx="4"></rect><path d="M12 3v4M8 12h.01M16 12h.01M8 16h8"></path></svg><span>智能体集市</span></li>
+      <li class="host-menu-item"><img class="host-menu-icon" src="assets/wdsheng/nav-demand.svg" alt=""><span>需求大厅</span></li>
+      <li class="host-menu-item"><img class="host-menu-icon" src="assets/wdsheng/nav-service.svg" alt=""><span>服务大厅</span></li>
+    </ul>
+    <div class="host-categories" aria-label="服务分类"><span>知识产权</span><span>营销推广</span><span>人力资源服务</span><span>软件与信息化</span><span>品牌与设计</span><span>AI 与数据智能</span><span>工商财税</span><span>企业综合服务</span><span>法律服务</span><span>跨境企服</span></div>
+    <div class="host-sidebar-bottom"><span>我的</span><small>通知消息</small></div>
+  </aside>
+
+  <main class="marketplace-main host-main" id="marketplace-main">
+    <nav id="marketplace-tabs" class="market-tabs title-tabs" role="tablist" aria-label="切换工作内容"><button id="tab-agents" class="is-active" type="button" role="tab" data-view="agents" aria-selected="true" aria-controls="view-agents" tabindex="0">智能体集市</button><button id="tab-scenes" type="button" role="tab" data-view="scenes" aria-selected="false" aria-controls="view-scenes" tabindex="-1">场景集市</button><button id="tab-workspace" type="button" role="tab" data-view="workspace" aria-selected="false" aria-controls="view-workspace" tabindex="-1">我的工作台</button></nav>
+    <p id="view-description" class="view-description">找到合适的数字员工，点开就能开始工作。</p>
+
+    <section id="view-agents" role="tabpanel" aria-labelledby="tab-agents">
+      <div class="catalog-toolbar"><div id="category-filters" class="category-filters" role="group" aria-label="员工分类"></div><label class="search-wrap"><svg viewbox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"></circle><path d="m16 16 4 4"></path></svg><span class="sr-only">搜索员工或工作内容</span><input id="role-search" type="search" placeholder="搜索员工或工作内容" autocomplete="off"></label></div>
+      <div class="catalog-meta"><span id="result-count" class="result-count" aria-live="polite">8 位员工</span><span>点击员工卡片，右侧直接开始使用</span></div>
+      <div id="role-grid" class="role-grid"></div>
+      <p id="empty-state" class="empty-state" hidden>暂时没有匹配的员工，试试其他关键词或分类。</p>
+    </section>
+
+    <section id="view-scenes" role="tabpanel" aria-labelledby="tab-scenes" hidden><div class="scenario-toolbar"><div class="category-filters scenario-filters" id="scene-filters" role="group" aria-label="按场景类型筛选"><button type="button" data-scene-category="all" class="is-active" aria-pressed="true">全部</button><button type="button" data-scene-category="sales" aria-pressed="false">销售增长</button></div><label class="search-wrap scenario-search"><svg viewbox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"></circle><path d="m16 16 4 4"></path></svg><span class="sr-only">搜索场景</span><input id="scene-search" type="search" aria-label="搜索场景" placeholder="搜索场景或工作内容" autocomplete="off"></label></div><p id="scene-result-count" class="scenario-result-count" aria-live="polite"></p><div id="scene-grid" class="scenario-grid"></div><p id="scene-empty" class="empty-state scenario-empty" hidden>暂时没有匹配的场景，试试其他关键词或分类。</p></section>
+
+    <section id="view-workspace" role="tabpanel" aria-labelledby="tab-workspace" hidden>
+      <div class="workspace-metrics"><div><span>对话记录</span><strong id="workspace-total">—</strong></div><div><span>累计使用 <small>示例用量</small></span><strong id="workspace-token">—</strong></div><div><span>剩余额度 <small>示例额度</small></span><strong id="workspace-quota">—</strong></div></div>
+      <p class="workspace-note">用量与额度为示例，不代表真实账单；新对话仅保存在当前浏览器。</p>
+      <div class="history-heading"><h3>最近对话</h3><span>点击继续</span></div><div id="history-list" class="history-list"></div>
+    </section>
+    <p class="page-footnote">数字员工能力、账号与额度以正式接入后为准。</p>
+  </main>
+
+  <dialog id="employee-drawer" class="employee-drawer" aria-labelledby="drawer-title">
+    <div class="drawer-header"><span id="drawer-mark" class="drawer-mark" aria-hidden="true">文</span><div class="drawer-identity"><h2 id="drawer-title">数字员工</h2><p id="drawer-subtitle"></p></div><button id="drawer-new" class="new-chat" type="button">新对话</button><button id="drawer-close" class="icon-button" type="button" aria-label="关闭员工对话"><svg viewbox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"></path></svg></button></div>
+    <p class="connection-note"><span class="connection-dot" aria-hidden="true"></span>当前消息保存在本机，数字员工尚未连接。</p>
+    <details class="drawer-capability"><summary>查看员工能力</summary><div id="drawer-capabilities"></div></details>
+    <div id="drawer-scroll" class="drawer-scroll">
+      <section id="drawer-welcome" class="drawer-welcome"><div class="welcome-symbol" aria-hidden="true"><svg viewbox="0 0 24 24"><path d="M12 3v4M5 7h14v13H5zM8 11h.01M16 11h.01M8 15h8"></path></svg></div><h3>把这项工作交给我</h3><p id="drawer-intro"></p><div id="drawer-prompts" class="drawer-prompts"></div></section>
+      <div id="drawer-messages" class="drawer-messages" aria-live="polite" aria-relevant="additions text"></div>
+    </div>
+    <form id="drawer-form" class="drawer-form">
+      <div id="pending-files" class="pending-files" hidden></div>
+      <label class="sr-only" for="drawer-input">告诉数字员工你想完成的工作</label><textarea id="drawer-input" rows="3" placeholder="告诉我，你想完成什么工作？"></textarea>
+      <div class="composer-actions"><button id="drawer-attach" class="attachment-button" type="button"><svg viewbox="0 0 24 24" aria-hidden="true"><path d="m8 13 7-7a3 3 0 0 1 4 4l-9 9a5 5 0 0 1-7-7l9-9M6 15l9-9"></path></svg><span>添加附件</span></button><input id="drawer-file" type="file" multiple hidden><span class="composer-hint">Enter 发送 · Shift + Enter 换行</span><button id="drawer-send" class="send-button" type="submit" disabled>发送<svg viewbox="0 0 24 24" aria-hidden="true"><path d="M12 19V5m-6 6 6-6 6 6"></path></svg></button></div>
+      <span id="drawer-status" class="drawer-status" role="status" aria-live="polite"></span>
+    </form>
+  </dialog>
+  <div id="toast" class="toast" role="status" hidden></div>
+</body>
+</html>

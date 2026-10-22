@@ -1,0 +1,50 @@
+/* 原独立版 scenes.css：规则限定在 .host-main 内，沿用卡片、字体与场景样式。 */
+/* 场景与员工共用目录标题，所有新增规则限定在场景组件内。 */
+.host-main #marketplace-tabs{display:flex;align-items:center;gap:28px;min-width:0}
+.host-main #marketplace-tabs [role="tab"]{position:relative;border:0;background:none;color:#959ba5;padding:0 0 9px;min-height:44px;font-size:23px;font-weight:500;line-height:1.65;letter-spacing:-.025em;white-space:nowrap;transition:color .18s var(--ease)}
+.host-main #marketplace-tabs [role="tab"]:after{position:absolute;content:"";height:2px;left:0;right:0;bottom:0;background:var(--ink);transform:scaleX(0);transform-origin:left;transition:transform .18s var(--ease)}
+.host-main #marketplace-tabs [role="tab"][aria-selected="true"]{color:var(--ink)}
+.host-main #marketplace-tabs [role="tab"][aria-selected="true"]:after{transform:scaleX(1)}
+.host-main #view-scenes{min-width:0}
+.host-main .scenario-toolbar{display:flex;justify-content:space-between;align-items:center;gap:24px;margin-bottom:18px}
+.host-main .scenario-filters{flex-shrink:0;padding-top:0;padding-bottom:0}
+.host-main .scenario-search{width:min(390px,44%)}
+.host-main .scenario-result-count{margin:0 0 18px;color:#7a818c;font-size:12px;line-height:1.7}
+.host-main .scenario-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px}
+.host-main .scenario-card{min-width:0;background:var(--paper);border:1px solid var(--line);border-radius:14px;overflow:hidden;transition:transform .22s var(--ease),box-shadow .22s var(--ease),border-color .22s var(--ease)}
+.host-main .scenario-card-trigger{display:flex;flex-direction:column;width:100%;height:100%;text-align:left;padding:10px;border:0;border-radius:inherit;background:none;color:var(--ink)}
+.host-main .scenario-card-trigger:focus-visible{outline-offset:-3px;border-radius:inherit}
+.host-main .scenario-card-cover{display:block;width:100%;aspect-ratio:16/10;overflow:hidden;border-radius:9px;background:#f3f5f8}
+.host-main .scenario-card-cover img{width:100%;height:100%;object-fit:cover;transition:transform .55s var(--ease)}
+.host-main .scene-cover-marketing img{object-position:center 46%}
+.host-main .scene-cover-reports img{object-position:42% center}
+.host-main .scene-cover-images img{object-position:45% center}
+.host-main .scene-cover-templates img{object-position:80% center}
+.host-main .scene-cover-custom img{object-position:center}
+.host-main .scenario-card-content{display:flex;flex:1;flex-direction:column;padding:18px 10px 11px;min-width:0;width:100%}
+.host-main .scenario-card-title{display:block;font-size:17px;line-height:1.65;font-weight:550;letter-spacing:-.02em;margin-bottom:7px;text-wrap:pretty}
+.host-main .scenario-card-description{display:block;color:var(--muted);font-size:12px;line-height:1.95;margin-bottom:24px;text-wrap:pretty}
+.host-main .scenario-card-footer{display:flex;justify-content:space-between;align-items:center;gap:12px;font-size:12px;line-height:1.7;margin-top:auto;color:#434b58}
+.host-main .scenario-card-footer svg{width:17px;height:17px;transition:transform .22s var(--ease)}
+.host-main .scenario-empty{margin-top:20px}
+.host-main .scenario-dialog[data-view="profile"]{width:min(900px,calc(100vw - 48px))}
+.host-main .scenario-detail{min-width:0}
+.host-main .scenario-detail-heading{margin-bottom:25px}
+.host-main .scenario-detail-heading .dialog-intro{max-width:700px;margin:0!important;font-size:13px;line-height:1.9}
+.host-main .scenario-detail-layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:30px}
+.host-main .scenario-detail-visual,.host-main .scenario-detail-content{min-width:0}
+.host-main .scenario-detail-cover{border-radius:12px;overflow:hidden;background:#f3f5f8;aspect-ratio:16/10}
+.host-main .scenario-detail-cover img{width:100%;height:100%;object-fit:cover}
+.host-main .scenario-detail-visual .dialog-actions{margin-top:19px}
+.host-main .scenario-detail-visual .dialog-actions .button{justify-content:space-between;min-height:46px;padding-inline:19px}
+.host-main .scenario-detail-content section+section{margin-top:25px}
+.host-main .service-dialog .scenario-detail-content h3{margin:0 0 13px;font-size:14px;line-height:1.6;font-weight:550}
+.host-main .scenario-task-list{padding-left:18px;margin:0;color:#626c7a;font-size:13px;line-height:1.95}
+.host-main .scenario-task-list li+li{margin-top:7px}
+.host-main .scenario-preparation{list-style:none;display:grid;gap:8px;margin:0;padding:0;font-size:12px;line-height:1.85;color:#626c7a}
+.host-main .scenario-preparation li{padding:10px 13px;border-radius:9px;background:#f5f6f8}
+@media(hover:hover) and (pointer:fine){.host-main #marketplace-tabs [role="tab"]:hover{color:#4b5360}.host-main .scenario-card:hover{transform:translateY(-5px);border-color:#cbd2dd;box-shadow:0 14px 32px rgba(27,34,48,.075)}.host-main .scenario-card:hover .scenario-card-cover img{transform:scale(1.035)}.host-main .scenario-card:hover .scenario-card-footer svg{transform:translateX(3px)}}
+@media(min-width:1600px){.host-main .scenario-card-title{font-size:18px}.host-main .scenario-card-description{font-size:13px}}
+@media(max-width:1150px){.host-main #marketplace-tabs [role="tab"]{font-size:22px}.host-main .scenario-grid{gap:18px}.host-main .scenario-card-title{font-size:16px}.host-main .scenario-card-content{padding:16px 7px 10px}}
+@media(max-width:767px){.host-main #marketplace-tabs{gap:26px}.host-main #marketplace-tabs [role="tab"]{font-size:21px;line-height:1.65}.host-main .scenario-toolbar{display:flex;flex-direction:column-reverse;align-items:stretch;gap:19px;margin-bottom:15px}.host-main .scenario-search{width:100%}.host-main .scenario-filters{margin-right:0;padding-right:0}.host-main .scenario-result-count{margin-bottom:17px;font-size:11px}.host-main .scenario-grid{grid-template-columns:1fr;gap:19px}.host-main .scenario-card-trigger{padding:9px}.host-main .scenario-card-cover{aspect-ratio:16/9}.host-main .scenario-card-content{padding:18px 9px 11px}.host-main .scenario-card-title{font-size:17px;margin-bottom:8px}.host-main .scenario-card-description{font-size:12px;margin-bottom:22px}.host-main .scenario-card-footer{font-size:12px;min-height:26px}.host-main .scenario-dialog[data-view="profile"]{width:calc(100vw - 24px);padding:28px 23px}.host-main .scenario-detail-heading{margin-bottom:22px}.host-main .scenario-detail-layout{grid-template-columns:1fr;gap:28px}.host-main .scenario-detail-cover{aspect-ratio:16/9}.host-main .scenario-detail-visual .dialog-actions{margin-top:15px}.host-main .scenario-detail-content section+section{margin-top:23px}}
+@media(prefers-reduced-motion:reduce){.host-main #marketplace-tabs [role="tab"],.host-main #marketplace-tabs [role="tab"]:after,.host-main .scenario-card,.host-main .scenario-card-cover img,.host-main .scenario-card-footer svg{transition:none}.host-main .scenario-card:hover,.host-main .scenario-card:hover .scenario-card-cover img,.host-main .scenario-card:hover .scenario-card-footer svg{transform:none}}

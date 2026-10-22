@@ -1,0 +1,36 @@
+/* 仅适配宿主空间；卡片、封面与价格字体仍使用 legacy 样式。 */
+.host-main { background: transparent; }
+.host-main #marketplace-tabs.title-tabs {
+  display: flex; align-items: baseline; gap: 32px;
+  border: 0; margin: 0; padding: 0; overflow-x: auto;
+  scrollbar-width: none;
+}
+.host-main #marketplace-tabs.title-tabs [role="tab"] {
+  flex: 0 0 auto; padding: 0 0 6px; min-height: 48px;
+  color: #92939d; font-size: 28px; font-weight: 500;
+  line-height: 1.5; letter-spacing: -.025em;
+}
+.host-main #marketplace-tabs.title-tabs [aria-selected="true"] { color: #202127; font-weight: 600; }
+.host-main #marketplace-tabs.title-tabs [role="tab"]:after { display: none; }
+.host-main .view-description { margin: 10px 0 29px; color: #717581; font-size: 13px; line-height: 1.8; }
+.host-main .workspace-metrics strong { font-family: "D-DIN", "DIN Alternate", sans-serif; font-variant-numeric: tabular-nums; }
+.host-main .role-card { cursor: pointer; }
+.host-main .role-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.host-main .scenario-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.host-main .catalog-meta .result-count { display: block; }
+.drawer-status { color: #7b7284; }
+.drawer-status.is-error { color: #a04f3c; }
+.host-brand > img { width: 137px; height: auto; }
+.host-menu-icon { width: 21px; height: 21px; object-fit: contain; flex-shrink: 0; }
+.host-sidebar-bottom > span { display: flex; align-items: center; gap: 13px; }
+.account-avatar img { width: 100%; height: 100%; object-fit: contain; }
+@media (min-width: 1800px) { .host-main .role-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 1100px) { .host-main .scenario-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 767px) {
+  .host-main #marketplace-tabs.title-tabs { gap: 24px; }
+  .host-main #marketplace-tabs.title-tabs [role="tab"] { font-size: 22px; min-height: 42px; }
+  .host-main .view-description { margin: 9px 0 24px; font-size: 12px; }
+  .host-main .role-grid, .host-main .scenario-grid { grid-template-columns: 1fr; }
+  .host-main .category-filters { margin-right: 0; max-width: 100%; padding-right: 0; }
+  .host-brand > img { width: 120px; }
+}

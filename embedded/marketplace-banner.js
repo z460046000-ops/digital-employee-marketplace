@@ -48,10 +48,12 @@
     try {
       var source = operations ? operations.getBanners() : fallback;
       var employees = operations ? operations.getEmployees() : window.marketplaceCatalog || [];
-      banners = source.filter(function (banner) {
+      var available = source.filter(function (banner) {
         var target = employees.find(function (employee) { return employee.id === banner.targetEmployeeId; });
-        return banner.enabled && banner.position === position && banner.targetAvailable !== false && target && target.published !== false;
+        return banner.enabled && banner.targetAvailable !== false && target && target.published !== false;
       });
+      var positioned = available.filter(function (banner) { return banner.position === position; });
+      banners = position ? (positioned.length ? positioned : available) : [];
     } catch (error) { banners = []; }
     holder.hidden = !position || banners.length === 0;
     document.body.classList.toggle("has-marketplace-banner", !holder.hidden);

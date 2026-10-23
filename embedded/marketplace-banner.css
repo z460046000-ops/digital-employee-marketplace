@@ -4,14 +4,14 @@
 .host-main .search-wrap input { -webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px); }
 .has-marketplace-banner #view-description { display:none; }
 .has-marketplace-banner .host-main #marketplace-tabs { margin-bottom:24px; }
-.marketplace-banner { position:relative; isolation:isolate; overflow:hidden; min-height:224px; margin:0 0 34px; border-radius:15px; background:#fff; border:1px solid #eaedf1; }
+.marketplace-banner { position:relative; isolation:isolate; overflow:hidden; height:240px; min-height:0; margin:0 0 34px; border-radius:15px; background:#fff; border:1px solid #eaedf1; }
 .marketplace-banner-visual { position:absolute; z-index:-1; inset:0 0 0 24%; overflow:hidden; }
 .marketplace-banner-visual img { width:100%; height:100%; object-fit:cover; object-position:64% 51%; }
 .marketplace-banner-visual:after { content:""; position:absolute; inset:0; background:linear-gradient(90deg,#fff 0%,rgba(255,255,255,.98) 8%,rgba(255,255,255,.84) 21%,rgba(255,255,255,.4) 36%,rgba(255,255,255,0) 58%); pointer-events:none; }
-.marketplace-banner-copy { width:58%; padding:30px 32px 29px; }
-.marketplace-banner h2 { margin:0; max-width:490px; color:#17191d; font-size:clamp(24px,2.08vw,33px); line-height:1.48; font-weight:500; letter-spacing:-.035em; text-wrap:balance; }
-.marketplace-banner-copy>p { margin:12px 0 19px; color:#626976; font-size:12px; line-height:1.9; max-width:430px; }
-.marketplace-banner-copy>button { display:inline-flex; align-items:center; gap:20px; min-height:40px; padding:10px 20px; border:1px solid #17191d; border-radius:23px; color:#fff; background:#17191d; font-size:12px; transition:transform .18s cubic-bezier(.22,1,.36,1),background .18s; }
+.marketplace-banner-copy { display:grid;grid-template-rows:minmax(0,1fr) 3.4em 40px;row-gap:9px;width:58%;height:100%;padding:24px 32px;font-size:12px; }
+.marketplace-banner h2 { margin:0; max-width:490px; color:#17191d; font-size:clamp(24px,2.08vw,33px); line-height:1.35; font-weight:500; letter-spacing:-.035em; text-wrap:balance;align-self:start;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;max-height:2.7em;overflow:hidden;overflow-wrap:anywhere; }
+.marketplace-banner-copy>p { margin:0;color:#626976;font-size:12px;line-height:1.7;max-width:430px;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;max-height:3.4em;overflow:hidden;overflow-wrap:anywhere; }
+.marketplace-banner-copy>button { display:inline-flex; align-items:center;justify-self:start;gap:20px; min-height:40px; padding:10px 20px; border:1px solid #17191d; border-radius:23px; color:#fff; background:#17191d; font-size:12px; transition:transform .18s cubic-bezier(.22,1,.36,1),background .18s; }
 .marketplace-banner-copy>button>span { font-size:17px; font-weight:400; line-height:1; }
 .banner-controls { position:absolute; right:19px; bottom:17px; display:flex; align-items:center; gap:12px; padding:5px 8px 5px 12px; border-radius:22px; background:rgba(255,255,255,.82);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px); }
 .banner-dots { display:flex; gap:4px; align-items:center; }
@@ -50,8 +50,8 @@
   #banner-pause:hover { background:#eceff3; }
 }
 @media(max-width:1250px) { .host-main .role-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } }
-@media(max-width:1100px) { .marketplace-banner-copy{width:67%;padding:27px}.marketplace-banner-visual{left:24%}.marketplace-banner h2{font-size:27px}.banner-controls{right:12px;bottom:12px} }
-@media(max-width:767px) { .marketplace-banner{margin:0 0 30px;min-height:268px}.marketplace-banner-copy{width:76%;padding:24px 23px 52px}.marketplace-banner h2{font-size:25px;max-width:315px}.marketplace-banner-copy>p{font-size:11px;max-width:250px;margin:12px 0 17px}.marketplace-banner-visual{left:25%;opacity:.82}.marketplace-banner-visual:after{background:linear-gradient(90deg,#fff 0%,rgba(255,255,255,.94) 16%,rgba(255,255,255,.7) 43%,rgba(255,255,255,.04) 100%)}.marketplace-banner-copy>button{font-size:11px;min-height:40px;padding:9px 17px}.banner-controls{bottom:10px}.host-main .role-grid{grid-template-columns:1fr;gap:20px}.host-main .role-cover{max-height:none;aspect-ratio:1.8}.host-main .role-info{padding:16px 9px 9px}.host-main .role-description{min-height:0;margin-bottom:22px} }
+@media(max-width:1100px) { .marketplace-banner-copy{width:67%;padding:24px 27px}.marketplace-banner-visual{left:24%}.marketplace-banner h2{font-size:27px}.banner-controls{right:12px;bottom:12px} }
+@media(max-width:767px) { .marketplace-banner{margin:0 0 30px;height:292px;min-height:0}.marketplace-banner-copy{width:76%;padding:24px 23px 52px}.marketplace-banner h2{font-size:25px;max-width:315px;-webkit-line-clamp:3;max-height:4.05em}.marketplace-banner-copy>p{font-size:11px;max-width:250px;margin:0}.marketplace-banner-visual{left:25%;opacity:.82}.marketplace-banner-visual:after{background:linear-gradient(90deg,#fff 0%,rgba(255,255,255,.94) 16%,rgba(255,255,255,.7) 43%,rgba(255,255,255,.04) 100%)}.marketplace-banner-copy>button{font-size:11px;min-height:40px;padding:9px 17px}.banner-controls{bottom:10px}.host-main .role-grid{grid-template-columns:1fr;gap:20px}.host-main .role-cover{max-height:none;aspect-ratio:1.8}.host-main .role-info{padding:16px 9px 9px}.host-main .role-description{min-height:0;margin-bottom:22px} }
 @media(prefers-reduced-motion:reduce) { .host-main .title-tabs,.host-main .role-card,.employee-drawer[open],.employee-drawer[open].is-closing{animation:none!important;filter:none!important}.host-main .role-card:hover,.host-main .scenario-card:hover,.marketplace-banner-copy>button:hover{transform:none!important}.host-main .role-card:hover .role-cover img{transform:none!important} }
 @media(prefers-reduced-transparency:reduce),(prefers-contrast:more) { .host-header,.banner-controls,.host-main .search-wrap input{background:#fff;-webkit-backdrop-filter:none;backdrop-filter:none}.employee-drawer::backdrop{-webkit-backdrop-filter:none;backdrop-filter:none;background:rgba(25,25,30,.4)} }
 @supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))) { .host-header { background:#f5f5f8; } }

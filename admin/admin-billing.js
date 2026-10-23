@@ -29,16 +29,40 @@
     }).join("") || '<p class="empty-state">没有匹配的企业</p>';
     $("company-result-count").textContent = "共 " + list.length + " 家企业";
   }
+  function fullDate(value) {
+    var date = value ? new Date(value) : null;
+    return !date || Number.isNaN(date.getTime()) ? "未设置" : date.toLocaleDateString("zh-CN", { year: "numeric", month: "2-digit", day: "2-digit" }).replace(/\//g, "-");
+  }
+  function percentText(value) { return Number(value.toFixed(1)).toLocaleString("zh-CN"); }
+  function progress(label, used, total, percent, compact) {
+    var bounded = Math.max(0, Math.min(100, Number(percent) || 0));
+    var text = label + "：已用 " + numeric(used) + " 点，共 " + numeric(total) + " 点";
+    return '<div class="entitlement-progress' + (compact ? ' is-compact' : '') + '" role="progressbar" aria-label="' + escape(label) + '" aria-valuemin="0" aria-valuemax="100" aria-valuenow="' + bounded.toFixed(2) + '" aria-valuetext="' + escape(text) + '"><span style="transform:scaleX(' + (bounded / 100).toFixed(5) + ')"></span></div>';
+  }
+  function renderEntitlements(item) {
+    var panel = $("billing-entitlements");
+    if (!panel) return;
+    var summary = window.AdminBillingData.getEntitlements(item);
+    panel.hidden = false;
+    var update = summary.nextUpdateAt ? '下次权益更新 <time datetime="' + escape(summary.nextUpdateAt) + '" class="numeric">' + escape(fullDate(summary.nextUpdateAt)) + '</time>' : '暂无权益更新安排';
+    panel.innerHTML = '<div class="entitlement-heading"><div><p>当前套餐</p><h2>' + escape(summary.planName) + '<span class="entitlement-example">示例</span></h2></div><p class="entitlement-update">' + update + '</p></div>' +
+      '<div class="entitlement-usage"><h3>积分已用 / 总量 <span class="numeric">' + numeric(summary.used) + '<small> / ' + numeric(summary.total) + ' 点</small></span></h3><span class="entitlement-remaining">剩余 <strong class="numeric">' + numeric(summary.remaining) + '</strong> 点</span></div>' +
+      progress('累计积分用量', summary.used, summary.total, summary.percent, false) +
+      '<div class="entitlement-progress-note"><span>已用 <strong class="numeric">' + percentText(summary.percent) + '%</strong></span><span>基础额度优先使用，积分与 Token 分别计量</span></div>' +
+      '<div class="entitlement-allocations">' + summary.allocations.map(function (allocation) {
+        return '<article class="entitlement-allocation"><h3>' + escape(allocation.name) + '</h3><p class="entitlement-allocation-value numeric">' + numeric(allocation.used) + '<small> / ' + numeric(allocation.total) + ' 点</small></p>' +
+          progress(allocation.name, allocation.used, allocation.total, allocation.percent, true) + '<p class="entitlement-expiry">有效至 <time class="numeric"' + (allocation.validUntil ? ' datetime="' + escape(allocation.validUntil) + '"' : '') + '>' + escape(fullDate(allocation.validUntil)) + '</time></p></article>';
+      }).join('') + '<article class="entitlement-allocation entitlement-addons"><h3>加量包</h3><p class="entitlement-addon-value">暂无加量包</p><p class="entitlement-expiry"><span class="numeric">0</span> 个 · <span class="numeric">0</span> 点</p></article></div>' +
+      '<details class="entitlement-details"><summary>查看权益明细</summary><div class="entitlement-detail-list">' + summary.allocations.map(function (allocation) {
+        return '<div><span>' + escape(allocation.source) + '<small>剩余 <strong class="numeric">' + numeric(allocation.remaining) + '</strong> 点</small></span><span><strong class="numeric">' + numeric(allocation.total) + '</strong> 点<small class="numeric">' + escape(fullDate(allocation.validFrom)) + ' — ' + escape(fullDate(allocation.validUntil)) + '</small></span></div>';
+      }).join('') + '</div><p>以上为当前企业的示例权益分配，套餐调整由平台管理员处理。</p></details>';
+  }
   function metrics(item) {
-    var initial = Number(item.initialPoints) || 0;
-    var ledger = item.ledger || [];
-    var earned = Math.max(initial, 0), spent = 0, balance = initial;
-    ledger.forEach(function (event) { var amount = Number(event.delta) || 0; balance += amount; if (amount > 0) earned += amount; else spent -= amount; });
-    var tokens = (item.usageEvents || []).reduce(function (sum, event) { return sum + (Number(event.inputTokens) || 0) + (Number(event.outputTokens) || 0); }, 0);
-    $("available-points").innerHTML = numeric(balance) + ' <small>点</small>';
-    $("earned-points").innerHTML = numeric(earned) + ' <small>点</small>';
-    $("spent-points").innerHTML = numeric(spent) + ' <small>点</small>';
-    $("total-tokens").textContent = numeric(tokens);
+    var totals = window.AdminBillingData.summarize(item);
+    $("available-points").innerHTML = numeric(totals.available) + ' <small>点</small>';
+    $("earned-points").innerHTML = numeric(totals.earned) + ' <small>点</small>';
+    $("spent-points").innerHTML = numeric(totals.spent) + ' <small>点</small>';
+    $("total-tokens").textContent = numeric(totals.tokens);
   }
   function rowsWithBalances(item) {
     var running = Number(item.initialPoints) || 0;
@@ -64,11 +88,12 @@
   }
   function render() {
     var item = company();
-    if (!item) { $("billing-rows").innerHTML = ""; $("billing-empty").hidden = false; return; }
+    if (!item) { $("billing-rows").innerHTML = ""; $("billing-empty").hidden = false; if ($("billing-entitlements")) $("billing-entitlements").hidden = true; return; }
     selectedId = item.id;
     $("selected-company-name").textContent = item.name;
     $("selected-company-id").textContent = item.id;
     metrics(item);
+    renderEntitlements(item);
     renderCompanies();
     currentRows = filteredRows(item);
     $("billing-type-control").hidden = tab !== "ledger";

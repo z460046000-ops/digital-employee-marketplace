@@ -21,17 +21,21 @@
 .banner-counter { font-family:"D-DIN","DIN Alternate",sans-serif; font-size:12px; color:#626976; white-space:nowrap; font-variant-numeric:tabular-nums; }
 #banner-pause { display:grid; place-items:center; width:28px; height:28px; padding:0; border:0; background:none; color:#626976; border-radius:50%; font-size:12px; }
 .host-main .role-grid { grid-template-columns:repeat(3,minmax(0,1fr));gap:24px;align-items:stretch; }
-.host-main .role-card { display:flex;flex-direction:column;grid-template-columns:none;gap:0;min-height:0;padding:10px;border-radius:16px;border:1px solid #e6e9ee;background:#fff;animation:market-card-in .4s cubic-bezier(.22,1,.36,1) backwards; }
-.host-main .role-cover { display:block;flex:none;width:100%;aspect-ratio:1.8;max-height:200px;border-radius:10px; }
+.host-main .role-card { display:grid;grid-template-columns:64px minmax(0,1fr);grid-template-rows:64px minmax(0,1fr) 40px;gap:18px 16px;height:244px;min-height:0;padding:23px;border-radius:16px;border:1px solid #e6e9ee;background:#fff;animation:market-card-in .4s cubic-bezier(.22,1,.36,1) backwards; }
+.host-main .role-cover { display:block;grid-column:1;grid-row:1;width:64px;height:64px;aspect-ratio:1;max-height:64px;border-radius:12px; }
 .host-main .role-cover img { display:block;object-fit:cover;transition:transform .35s cubic-bezier(.22,1,.36,1); }
-.host-main .role-info { flex:1;padding:17px 10px 10px; }
-.host-main .role-heading { display:flex;align-items:center;justify-content:space-between;gap:12px; }
-.host-main .role-title { font-size:17px;font-weight:500;line-height:1.6;letter-spacing:-.02em; }
-.host-main .role-category { padding:3px 8px;color:#7c828c;background:#f5f6f8;border-radius:5px;font-size:10px;line-height:1.5;white-space:nowrap; }
-.host-main .role-description { font-size:13px;line-height:1.8;margin:10px 0 23px;min-height:47px;color:#787f8c; }
-.host-main .role-actions { margin-top:auto; }
-.host-main .role-actions .button { display:flex;align-items:center;justify-content:space-between;padding:11px 15px;min-height:41px;font-size:12px;border-radius:8px;font-weight:500; }
+.host-main .role-info { display:contents;padding:0; }
+.host-main .role-heading { display:flex;grid-column:2;grid-row:1;flex-direction:column;align-items:flex-start;justify-content:center;gap:3px;min-width:0; }
+.host-main .role-title { max-width:100%;font-size:17px;font-weight:500;line-height:1.6;letter-spacing:-.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
+.host-main .role-category { padding:0;color:#7c828c;background:none;border-radius:0;font-size:12px;line-height:1.6;white-space:nowrap; }
+.host-main .role-description { grid-column:1/-1;grid-row:2;align-self:start;font-size:13px;line-height:1.8;margin:0;min-height:0;color:#787f8c;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;max-height:3.6em;overflow:hidden; }
+.host-main .role-actions { grid-column:1/-1;grid-row:3;margin:0; }
+.host-main .role-actions .button { display:flex;align-items:center;justify-content:space-between;padding:10px 15px;min-height:40px;font-size:12px;border-radius:8px;font-weight:500; }
 .host-main .role-action-arrow { font-size:17px;line-height:1;font-weight:400; }
+.host-main .scenario-card-cover { aspect-ratio:16/9; }
+.host-main .scenario-card-title { display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;min-height:3.2em;max-height:3.2em;overflow:hidden;font-size:17px;font-weight:500;line-height:1.6; }
+.host-main .scenario-card-description { display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;min-height:5.4em;max-height:5.4em;overflow:hidden;font-size:13px;line-height:1.8; }
+.host-main .scenario-card-arrow { font-size:17px;line-height:1; }
 .host-main .catalog-meta { margin-bottom:20px; }
 .host-main .role-card:nth-child(2) { animation-delay:35ms; }.host-main .role-card:nth-child(3) { animation-delay:70ms; }.host-main .role-card:nth-child(4) { animation-delay:105ms; }.host-main .role-card:nth-child(5) { animation-delay:140ms; }.host-main .role-card:nth-child(6) { animation-delay:175ms; }
 .employee-drawer[open] { animation: market-drawer-in .24s cubic-bezier(.22,1,.36,1) both; }
@@ -51,7 +55,7 @@
 }
 @media(max-width:1250px) { .host-main .role-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } }
 @media(max-width:1100px) { .marketplace-banner-copy{width:67%;padding:24px 27px}.marketplace-banner-visual{left:24%}.marketplace-banner h2{font-size:27px}.banner-controls{right:12px;bottom:12px} }
-@media(max-width:767px) { .marketplace-banner{margin:0 0 30px;height:292px;min-height:0}.marketplace-banner-copy{width:76%;padding:24px 23px 52px}.marketplace-banner h2{font-size:25px;max-width:315px;-webkit-line-clamp:3;max-height:4.05em}.marketplace-banner-copy>p{font-size:11px;max-width:250px;margin:0}.marketplace-banner-visual{left:25%;opacity:.82}.marketplace-banner-visual:after{background:linear-gradient(90deg,#fff 0%,rgba(255,255,255,.94) 16%,rgba(255,255,255,.7) 43%,rgba(255,255,255,.04) 100%)}.marketplace-banner-copy>button{font-size:11px;min-height:40px;padding:9px 17px}.banner-controls{bottom:10px}.host-main .role-grid{grid-template-columns:1fr;gap:20px}.host-main .role-cover{max-height:none;aspect-ratio:1.8}.host-main .role-info{padding:16px 9px 9px}.host-main .role-description{min-height:0;margin-bottom:22px} }
+@media(max-width:767px) { .marketplace-banner{margin:0 0 30px;height:292px;min-height:0}.marketplace-banner-copy{width:76%;padding:24px 23px 52px}.marketplace-banner h2{font-size:25px;max-width:315px;-webkit-line-clamp:3;max-height:4.05em}.marketplace-banner-copy>p{font-size:11px;max-width:250px;margin:0}.marketplace-banner-visual{left:25%;opacity:.82}.marketplace-banner-visual:after{background:linear-gradient(90deg,#fff 0%,rgba(255,255,255,.94) 16%,rgba(255,255,255,.7) 43%,rgba(255,255,255,.04) 100%)}.marketplace-banner-copy>button{font-size:11px;min-height:40px;padding:9px 17px}.banner-controls{bottom:10px}.host-main .role-grid{grid-template-columns:1fr;gap:20px} }
 @media(prefers-reduced-motion:reduce) { .host-main .title-tabs,.host-main .role-card,.employee-drawer[open],.employee-drawer[open].is-closing{animation:none!important;filter:none!important}.host-main .role-card:hover,.host-main .scenario-card:hover,.marketplace-banner-copy>button:hover{transform:none!important}.host-main .role-card:hover .role-cover img{transform:none!important} }
 @media(prefers-reduced-transparency:reduce),(prefers-contrast:more) { .host-header,.banner-controls,.host-main .search-wrap input{background:#fff;-webkit-backdrop-filter:none;backdrop-filter:none}.employee-drawer::backdrop{-webkit-backdrop-filter:none;backdrop-filter:none;background:rgba(25,25,30,.4)} }
 @supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))) { .host-header { background:#f5f5f8; } }

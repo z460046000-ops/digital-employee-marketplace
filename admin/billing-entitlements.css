@@ -1,0 +1,45 @@
+/* 套餐权益只拆分现有积分流水，模型 Token 继续单独计量。 */
+.billing-entitlements{margin:0 0 24px;padding:22px 24px;border:1px solid var(--line);border-radius:13px;background:#fff;color:var(--ink)}
+.entitlement-heading{display:flex;align-items:center;justify-content:space-between;gap:20px;margin-bottom:21px}
+.entitlement-heading>div>p{margin:0 0 7px;font-size:11px;line-height:1.5;color:#8993a2}
+.entitlement-heading h2{display:flex;align-items:center;gap:10px;margin:0;font-size:20px;font-weight:500;line-height:1.4;letter-spacing:-.02em}
+.entitlement-example{padding:3px 6px;border-radius:4px;background:#f1eefb;color:#8372b2;font-size:9px;font-weight:400;letter-spacing:0}
+.entitlement-update{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0;color:#8993a2;font-size:11px;line-height:1.7}
+.entitlement-update time{color:#5b687b;font-size:12px}
+.entitlement-usage{display:flex;align-items:baseline;justify-content:space-between;gap:18px;margin-bottom:12px}
+.entitlement-usage h3{display:flex;align-items:baseline;gap:16px;margin:0;font-size:12px;font-weight:500;line-height:1.5}
+.entitlement-usage h3>span{font-size:22px;line-height:1.25;font-weight:500}
+.entitlement-usage small,.entitlement-allocation-value small{font-size:11px;font-weight:400;color:#8e97a5}
+.entitlement-remaining{font-size:11px;line-height:1.5;color:#8893a2;white-space:nowrap}
+.entitlement-remaining strong{font-size:15px;font-weight:500;color:#4a5668}
+.entitlement-progress{height:7px;overflow:hidden;border-radius:6px;background:#edf0f5}
+.entitlement-progress>span{display:block;width:100%;height:100%;border-radius:inherit;background:#252c37;transform-origin:left;transition:transform .24s var(--ease)}
+.entitlement-progress.is-compact{height:4px}
+.entitlement-progress-note{display:flex;justify-content:space-between;gap:18px;margin-top:9px;font-size:10px;line-height:1.7;color:#97a0ad}
+.entitlement-progress-note strong{font-size:11px;font-weight:400;color:#6f7a8c}
+.entitlement-allocations{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:20px}
+.entitlement-allocation{min-width:0;padding:15px 16px;border:1px solid #edf0f4;border-radius:9px;background:#fafbfd}
+.entitlement-allocation h3{margin:0;font-size:11px;font-weight:400;line-height:1.6;color:#687587}
+.entitlement-allocation-value{margin:9px 0 11px;font-size:22px;font-weight:500;line-height:1.25;letter-spacing:-.015em}
+.entitlement-allocation:nth-child(2) .entitlement-progress>span{background:#8d7dbc}
+.entitlement-expiry{margin:9px 0 0;color:#9aa3b0;font-size:10px;line-height:1.7}
+.entitlement-expiry time{color:#7f8b9c;white-space:nowrap}
+.entitlement-addons{display:flex;flex-direction:column}
+.entitlement-addon-value{margin:12px 0 0;font-size:14px;font-weight:400;line-height:1.6;color:#657184}
+.entitlement-addons .entitlement-expiry{margin-top:auto;padding-top:13px}
+.entitlement-details{margin-top:15px;font-size:11px;line-height:1.7;color:#6f7b8e}
+.entitlement-details>summary{display:flex;align-items:center;gap:8px;min-height:26px;width:max-content;max-width:100%;list-style:none;cursor:pointer}
+.entitlement-details>summary::-webkit-details-marker{display:none}
+.entitlement-details>summary:after{content:"⌄";font-size:14px;color:#98a2b0;transform:translateY(-2px);transition:transform .18s var(--ease)}
+.entitlement-details[open]>summary:after{transform:translateY(1px) rotate(180deg)}
+.entitlement-details>summary:focus-visible{outline:2px solid var(--purple);outline-offset:4px;border-radius:2px}
+.entitlement-detail-list{margin-top:12px;border-top:1px solid #edf0f4}
+.entitlement-detail-list>div{display:flex;justify-content:space-between;gap:20px;padding:12px 0;border-bottom:1px solid #edf0f4}
+.entitlement-detail-list>div>span:last-child{text-align:right}
+.entitlement-detail-list strong{font-weight:400}
+.entitlement-detail-list small{display:block;font-size:10px;color:#9aa4b2;margin-top:3px}
+.entitlement-details>p{margin:11px 0 0;font-size:10px;line-height:1.8;color:#9aa4b2}
+@media(max-width:1100px){.billing-entitlements{padding:20px}.entitlement-allocation{padding:13px 12px}.entitlement-usage h3{gap:11px}.entitlement-allocation-value{font-size:21px}.entitlement-update{gap:5px}}
+@media(max-width:580px){.billing-entitlements{padding:20px 17px}.entitlement-heading{align-items:flex-start;gap:16px;margin-bottom:20px}.entitlement-update{max-width:133px;font-size:10px;justify-content:flex-end;text-align:right}.entitlement-update time{font-size:11px}.entitlement-usage{align-items:flex-start;gap:12px}.entitlement-usage h3{flex-direction:column;gap:7px;font-size:11px}.entitlement-remaining{padding-top:25px;font-size:10px}.entitlement-progress-note{gap:14px;align-items:flex-start}.entitlement-progress-note>span:last-child{max-width:165px;text-align:right}.entitlement-allocations{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:17px}.entitlement-allocation{padding:13px 12px}.entitlement-allocation-value{font-size:21px}.entitlement-addons{grid-column:1/-1;display:grid;grid-template-columns:1fr auto;align-items:center;column-gap:12px}.entitlement-addons h3{grid-column:1;grid-row:1}.entitlement-addon-value{grid-column:1;grid-row:2;margin-top:3px;font-size:12px}.entitlement-addons .entitlement-expiry{grid-column:2;grid-row:1/3;margin:0;padding:0}.entitlement-detail-list>div{gap:12px}.entitlement-detail-list small{font-size:9px}}
+@media(prefers-reduced-motion:reduce){.entitlement-progress>span,.entitlement-details>summary:after{transition:none}}
+@media(prefers-contrast:more){.billing-entitlements,.entitlement-allocation{border-color:#6d7785}.entitlement-progress{background:#d2d7df}.entitlement-progress>span,.entitlement-allocation:nth-child(2) .entitlement-progress>span{background:#17191d}.entitlement-update,.entitlement-expiry,.entitlement-progress-note,.entitlement-details>p,.entitlement-details small{color:#566172}}

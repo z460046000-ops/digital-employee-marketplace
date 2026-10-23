@@ -3,6 +3,49 @@
 
   var now = Date.now();
   function ago(days, minutes) { return new Date(now - days * 86400000 - (minutes || 0) * 60000).toISOString(); }
+  function future(days) { return new Date(now + days * 86400000).toISOString(); }
+  function summarize(item) {
+    item = item || {};
+    var initial = Number(item.initialPoints) || 0;
+    var earned = Math.max(initial, 0), spent = Math.max(-initial, 0), available = initial;
+    (item.ledger || []).forEach(function (event) {
+      var delta = Number(event.delta) || 0;
+      available += delta;
+      if (delta > 0) earned += delta;
+      else spent -= delta;
+    });
+    var tokens = (item.usageEvents || []).reduce(function (sum, event) {
+      return sum + (Number(event.inputTokens) || 0) + (Number(event.outputTokens) || 0);
+    }, 0);
+    return { earned: earned, spent: spent, available: available, tokens: tokens };
+  }
+  function percentage(used, total) {
+    return Math.max(0, Math.min(100, total > 0 ? used / total * 100 : used > 0 ? 100 : 0));
+  }
+  function getEntitlements(item) {
+    var totals = summarize(item);
+    var settings = item && item.entitlements || {};
+    var baseTotal = Math.floor(totals.earned * 0.8);
+    var baseUsed = Math.min(totals.spent, baseTotal);
+    var giftTotal = totals.earned - baseTotal;
+    // 示例分配仅拆分已有入账，超出基础额度的消耗归入赠送额度，绝不追加积分。
+    var allocations = [
+      { id: "base", name: "基础额度", source: "体验套餐基础额度", total: baseTotal, used: baseUsed },
+      { id: "gift", name: "赠送额度", source: "新企业试用赠送", total: giftTotal, used: totals.spent - baseUsed }
+    ].map(function (allocation) {
+      allocation.remaining = allocation.total - allocation.used;
+      allocation.percent = percentage(allocation.used, allocation.total);
+      allocation.validFrom = settings.validFrom || null;
+      allocation.validUntil = settings.validUntil || null;
+      return allocation;
+    });
+    return {
+      planName: settings.planName || "体验版", isExample: true,
+      total: totals.earned, used: totals.spent, remaining: totals.available,
+      percent: percentage(totals.spent, totals.earned), nextUpdateAt: settings.nextUpdateAt || null,
+      allocations: allocations, addOnCount: 0, addOnPoints: 0
+    };
+  }
   function ledger(companyId, grant, deductions) {
     var balance = 0;
     var items = [{ id: companyId + "_credit_01", createdAt: ago(3, 120), employeeId: null, work: "新企业试用额度", type: "grant", delta: grant, status: "credited" }];
@@ -36,10 +79,13 @@
 
   window.AdminBillingData = {
     isExample: true,
+    summarize: summarize,
+    getEntitlements: getEntitlements,
     companies: definitions.map(function (item) {
       return {
         id: item[0], name: item[1], shortName: item[2], initialPoints: 0,
         ledger: ledger(item[0], item[3], item[4]),
+        entitlements: { planName: "体验版", validFrom: ago(3, 120), validUntil: future(27), nextUpdateAt: future(27) },
         usageEvents: usageRows.map(function (row, index) {
           return { id: item[0] + "_RUN_" + String(index + 1).padStart(3, "0"), createdAt: ago(row[5], row[6]), employeeId: row[0], conversationTitle: row[1], inputTokens: Math.round(row[2] * item[5]), outputTokens: Math.round(row[3] * item[5]), status: row[4] };
         }).sort(function (a, b) { return b.createdAt.localeCompare(a.createdAt); })

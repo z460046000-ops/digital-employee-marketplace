@@ -20,14 +20,11 @@
   var composing = false;
   var currentView = "agents";
   var closeTimer;
+  var rechargeCloseTimer;
   var scenes = window.marketplaceScenes || [];
   // 只模拟本页扣点：50 点、每次发送 10 点，刷新或重置后恢复；不产生真实 Token 用量。
   var previewQuota = { total: 50, remaining: new URLSearchParams(window.location.search).get("quota") === "empty" ? 0 : 50, perMessage: 10 };
   var lastMarketView = "agents";
-  var originalExampleMessages = new Set();
-  (window.WorkspaceExamples.conversations || []).forEach(function (item) {
-    item.messages.forEach(function (message) { originalExampleMessages.add(message.id); });
-  });
 
   if (new URLSearchParams(window.location.search).get("embed") === "1") document.body.classList.add("embed-mode");
 
@@ -51,6 +48,11 @@
     toast($("drawer-status").textContent);
   }
 
+  function clearStatus() {
+    $("drawer-status").textContent = "";
+    $("drawer-status").classList.remove("is-error");
+  }
+
   function contextKey() { return active.id + ":" + (activeScene ? activeScene.id : ""); }
 
   function remember() {
@@ -70,8 +72,7 @@
       if (!conversation) conversation = store.createConversation({ employeeId: active.id, sceneId: activeScene ? activeScene.id : null });
       conversation = store.setDraft(conversation.id, input.value);
       remember();
-      $("drawer-status").classList.remove("is-error");
-      $("drawer-status").textContent = "已保存在本机 · 未发送给数字员工";
+      clearStatus();
       return true;
     } catch (error) {
       storageError(error);
@@ -88,9 +89,9 @@
     $("drawer-quota-value").textContent = previewQuota.remaining.toLocaleString("zh-CN");
     $("drawer-quota-total").textContent = previewQuota.total.toLocaleString("zh-CN");
     $("drawer-quota").classList.toggle("is-empty", exhausted);
-    $("drawer-quota-note").textContent = exhausted ? "演示额度已用完，可前往workspace体验完整功能。" : "每次发送模拟扣 10 点，还可发送 " + (previewQuota.remaining / previewQuota.perMessage) + " 次";
+    $("drawer-quota-note").textContent = exhausted ? "体验额度已用完，可前往 Workspace 继续使用。" : "每次发送模拟扣 10 点，还可发送 " + (previewQuota.remaining / previewQuota.perMessage) + " 次";
     $("quota-exhausted").hidden = !exhausted;
-    $("drawer-credit-cta").textContent = exhausted ? "充值继续使用" : "额度说明";
+    $("drawer-credit-cta").textContent = "额度";
     $("composer-hint").textContent = exhausted ? "当前输入会保留" : "Enter 发送 · Shift + Enter 换行";
     updateSend();
   }
@@ -101,7 +102,7 @@
     hideRecharge(false);
     renderQuota();
     renderWorkspace();
-    window.requestAnimationFrame(function () { $("drawer-scroll").scrollTop = $("drawer-scroll").scrollHeight; });
+    showRecharge();
   }
 
   function resetDemoQuota() {
@@ -112,20 +113,31 @@
     hideRecharge(false);
     renderQuota();
     renderWorkspace();
-    toast("演示额度已恢复为 50 点，对话和草稿保留。");
+    toast("体验额度已恢复为 50 点，对话和草稿保留。");
   }
 
   function showRecharge() {
-    $("recharge-panel").hidden = false;
+    var panel = $("recharge-panel");
+    window.clearTimeout(rechargeCloseTimer);
+    panel.classList.remove("is-closing");
+    $("recharge-copy").textContent = previewQuota.remaining <= 0 ? "体验额度已用完，可前往 Workspace 继续使用。" : "前往 Workspace 管理额度，继续使用数字员工服务。";
+    if (!panel.open) panel.showModal();
     $("drawer-credit-cta").setAttribute("aria-expanded", "true");
-    $("drawer-scroll").scrollTop = 0;
     $("recharge-close").focus({ preventScroll: true });
   }
 
   function hideRecharge(restoreFocus) {
-    $("recharge-panel").hidden = true;
+    var panel = $("recharge-panel");
+    window.clearTimeout(rechargeCloseTimer);
     $("drawer-credit-cta").setAttribute("aria-expanded", "false");
-    if (restoreFocus) $("drawer-credit-cta").focus({ preventScroll: true });
+    function finish() {
+      panel.classList.remove("is-closing");
+      if (panel.open) panel.close();
+      if (restoreFocus && drawer.open) $("drawer-credit-cta").focus({ preventScroll: true });
+    }
+    if (!panel.open || !restoreFocus || typeof window.matchMedia !== "function" || window.matchMedia("(prefers-reduced-motion: reduce)").matches) { finish(); return; }
+    panel.classList.add("is-closing");
+    rechargeCloseTimer = window.setTimeout(finish, 180);
   }
 
   function renderPending() {
@@ -133,7 +145,7 @@
     holder.replaceChildren();
     holder.hidden = pendingFiles.length === 0;
     pendingFiles.forEach(function (file, index) {
-      var chip = node("span", "file-chip", file.name);
+      var chip = node("span", "file-chip", file.name + " · 待上传");
       var remove = node("button", "remove-file", "×");
       remove.type = "button";
       remove.dataset.removeFile = String(index);
@@ -155,10 +167,9 @@
       if (message.text) article.appendChild(node("p", "message-body", message.text));
       if (message.files.length) {
         var files = node("div", "message-files");
-        message.files.forEach(function (file) { files.appendChild(node("span", "file-chip", file.name + " · 未上传")); });
+        message.files.forEach(function (file) { files.appendChild(node("span", "file-chip", file.name + " · 待上传")); });
         article.appendChild(files);
       }
-      if (message.role === "user" && !originalExampleMessages.has(message.id)) article.appendChild(node("small", "message-state", "仅存本机 · 未发送"));
       $("drawer-messages").appendChild(article);
     });
     window.requestAnimationFrame(function () { $("drawer-scroll").scrollTop = $("drawer-scroll").scrollHeight; });
@@ -208,6 +219,7 @@
     $("drawer-mark").textContent = employee.name.slice(0, 1);
     $("drawer-subtitle").textContent = scene ? scene.name : employee.description;
     input.disabled = employee.published === false;
+    input.placeholder = employee.published === false ? "这位员工已下架，已有对话仅供查看。" : "告诉我，你想完成什么工作？";
     $("drawer-new").disabled = employee.published === false;
     $("drawer-attach").disabled = employee.published === false;
     $("drawer-intro").textContent = "你好，我是" + employee.name + "。" + (scene ? "我们可以从“" + scene.name + "”开始。" : "把需要完成的工作告诉我。" );
@@ -221,9 +233,7 @@
       button.dataset.prompt = prompt;
       $("drawer-prompts").appendChild(button);
     });
-    $("drawer-status").classList.remove("is-error");
-    $("drawer-status").textContent = next && next.isExample ? "示例对话 · 新输入仅保存在本机" : "当前消息保存在本机，数字员工尚未连接。";
-    if (employee.published === false) $("drawer-status").textContent = "这位员工已下架，已有对话仍可查看。";
+    clearStatus();
     hideRecharge(false);
     renderQuota();
     renderPending();
@@ -236,10 +246,12 @@
     remember();
     updateRoute();
     input.focus({ preventScroll: true });
+    if (previewQuota.remaining <= 0 && employee.published !== false) showRecharge();
   }
 
   function closeDrawer() {
     if (!saveDraft()) return;
+    hideRecharge(false);
     remember();
     if (typeof window.matchMedia !== "function" || window.matchMedia("(prefers-reduced-motion: reduce)").matches) { drawer.close(); return; }
     drawer.classList.add("is-closing");
@@ -263,9 +275,9 @@
         $("drawer-mark").textContent = active.name.slice(0, 1);
         $("drawer-subtitle").textContent = activeScene ? activeScene.name : active.description;
         input.disabled = active.published === false;
+        input.placeholder = active.published === false ? "这位员工已下架，已有对话仅供查看。" : "告诉我，你想完成什么工作？";
         $("drawer-new").disabled = active.published === false;
         $("drawer-attach").disabled = active.published === false;
-        if (active.published === false) $("drawer-status").textContent = "这位员工已下架，已有对话仍可查看。";
         updateSend();
       }
     } catch (error) { toast(error.message || "运营配置暂时无法读取，已保留当前页面。"); }
@@ -287,17 +299,18 @@
       var image = node("img");
       image.src = employee.image;
       image.alt = employee.name + "工作素材";
-      image.width = 480;
-      image.height = 360;
+      image.width = 64;
+      image.height = 64;
       image.loading = "lazy";
       cover.appendChild(image);
       card.appendChild(cover);
       var copy = node("div", "role-info");
       var title = node("button", "role-title", employee.name);
       title.type = "button";
+      title.setAttribute("title", employee.name);
       var heading = node("div", "role-heading");
       heading.appendChild(title);
-      heading.appendChild(node("span", "role-category", employee.category));
+      if (employee.category !== employee.name) heading.appendChild(node("span", "role-category", employee.category));
       copy.appendChild(heading);
       copy.appendChild(node("p", "role-description", employee.description));
       var actions = node("div", "role-actions");
@@ -342,7 +355,9 @@
       var copy = node("span", "scenario-card-content");
       copy.appendChild(node("span", "scenario-card-title", scene.name));
       copy.appendChild(node("span", "scenario-card-description", scene.description));
-      copy.appendChild(node("span", "scenario-card-footer", "开始使用 →"));
+      var footer = node("span", "scenario-card-footer", "开始场景");
+      footer.appendChild(node("span", "scenario-card-arrow", "→"));
+      copy.appendChild(footer);
       trigger.appendChild(copy);
       card.appendChild(trigger);
       $("scene-grid").appendChild(card);
@@ -490,14 +505,22 @@
   if ($("scene-search")) $("scene-search").addEventListener("input", renderScenes);
   $("drawer-close").addEventListener("click", closeDrawer);
   $("drawer-credit-cta").addEventListener("click", showRecharge);
+  $("quota-exhausted-link").addEventListener("click", showRecharge);
   $("quota-simulate-empty").addEventListener("click", simulateEmptyQuota);
   $("quota-reset").addEventListener("click", resetDemoQuota);
   $("recharge-close").addEventListener("click", function () { hideRecharge(true); });
   $("recharge-back").addEventListener("click", function () { hideRecharge(true); });
+  $("recharge-panel").addEventListener("cancel", function (event) { event.preventDefault(); hideRecharge(true); });
+  $("recharge-panel").addEventListener("close", function () { $("drawer-credit-cta").setAttribute("aria-expanded", "false"); });
+  $("recharge-panel").addEventListener("click", function (event) {
+    if (event.target !== $("recharge-panel")) return;
+    var box = $("recharge-panel").getBoundingClientRect();
+    if (event.clientX < box.left || event.clientX > box.right || event.clientY < box.top || event.clientY > box.bottom) hideRecharge(true);
+  });
   if ($("drawer-new")) $("drawer-new").addEventListener("click", function () { if (active) openEmployee(active.id, activeScene ? activeScene.id : null, null, true); });
   drawer.addEventListener("cancel", function (event) {
     event.preventDefault();
-    if (!$("recharge-panel").hidden) { hideRecharge(true); return; }
+    if ($("recharge-panel").open) { hideRecharge(true); return; }
     closeDrawer();
   });
   drawer.addEventListener("close", function () {
@@ -528,7 +551,7 @@
     this.value = "";
     remember();
     renderPending();
-    $("drawer-status").textContent = "已添加文件名，文件内容尚未上传；刷新后需重新选择附件。";
+    clearStatus();
   });
   $("drawer-form").addEventListener("submit", function (event) {
     event.preventDefault();
@@ -546,8 +569,9 @@
       renderMessages();
       renderQuota();
       renderWorkspace();
-      $("drawer-status").textContent = "已模拟扣除 10 点 · 消息仅存本机，未产生真实费用或 Token 用量。";
+      clearStatus();
       updateRoute();
+      if (previewQuota.remaining <= 0) showRecharge();
     } catch (error) { storageError(error); }
   });
   window.addEventListener("pagehide", function () { if (drawer.open) saveDraft(); });

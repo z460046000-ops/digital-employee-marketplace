@@ -7,15 +7,18 @@
   <meta name="description" content="在智能体集市找到合适的数字员工，直接开始工作。">
   <title>智能体集市 · 万大圣</title>
   <link rel="icon" href="assets/wdsheng/favicon.ico">
-  <link rel="stylesheet" href="embedded.css">
-  <link rel="stylesheet" href="legacy-market.css">
-  <link rel="stylesheet" href="legacy-scenes.css">
+  <link rel="stylesheet" href="embedded.css?v=64100b362d">
+  <link rel="stylesheet" href="legacy-market.css?v=2a36075b56">
+  <link rel="stylesheet" href="legacy-scenes.css?v=3007a1046d">
   <link rel="stylesheet" href="embedded-layout.css?v=cdd66a2575">
-  <script src="catalog.js" defer></script>
-  <script src="workspace-examples.js" defer></script>
-  <script src="embedded-store.js" defer></script>
-  <script src="scene-catalog.js" defer></script>
-  <script src="embedded.js?v=7fa8670b3d" defer></script>
+  <link rel="stylesheet" href="marketplace-banner.css?v=28552116c0">
+  <script src="catalog.js?v=9ac908d0ac" defer></script>
+  <script src="../admin/ops-store.js?v=f1a9fa2be6" defer></script>
+  <script src="workspace-examples.js?v=a9755461c5" defer></script>
+  <script src="embedded-store.js?v=a1d183c111" defer></script>
+  <script src="scene-catalog.js?v=b0f39a9445" defer></script>
+  <script src="embedded.js?v=d9a555300b" defer></script>
+  <script src="marketplace-banner.js?v=732fc2cc9f" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#marketplace-main">跳转到智能体集市</a>
@@ -37,6 +40,12 @@
   </aside>
 
   <main class="marketplace-main host-main" id="marketplace-main">
+    <section id="marketplace-banner" class="marketplace-banner" aria-label="集市推荐" aria-roledescription="轮播" hidden>
+      <div class="marketplace-banner-visual"><img id="banner-image" src="assets/hero.jpg" width="1600" height="620" alt=""></div>
+      <div class="marketplace-banner-copy"><h2 id="banner-title"></h2><p id="banner-subtitle"></p><button id="banner-action" type="button">开始使用 <span aria-hidden="true">→</span></button></div>
+      <div class="banner-controls"><div id="banner-dots" class="banner-dots" aria-label="选择推荐内容"></div><span id="banner-counter" class="banner-counter"></span><button id="banner-pause" type="button" aria-label="暂停自动切换" aria-pressed="false"><span aria-hidden="true">Ⅱ</span></button></div>
+    </section>
+
     <nav id="marketplace-tabs" class="market-tabs title-tabs" role="tablist" aria-label="切换集市"><button id="tab-agents" class="is-active" type="button" role="tab" data-view="agents" aria-selected="true" aria-controls="view-agents" tabindex="0">智能体集市</button><button id="tab-scenes" type="button" role="tab" data-view="scenes" aria-selected="false" aria-controls="view-scenes" tabindex="-1">场景集市</button></nav>
     <div id="workspace-heading" class="workspace-heading" hidden><button type="button" class="workspace-back" data-view="agents"><span aria-hidden="true">←</span> 返回集市</button><h1 id="workspace-title">我的工作台</h1></div>
     <p id="view-description" class="view-description">找到合适的数字员工，点开就能开始工作。</p>

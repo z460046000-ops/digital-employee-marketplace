@@ -2,6 +2,7 @@
   "use strict";
 
   var catalog = window.marketplaceCatalog || [];
+  var operations = window.MarketplaceOps;
   var store = window.WorkspaceStore;
   var byId = new Map(catalog.map(function (employee) { return [employee.id, employee]; }));
   var $ = function (id) { return document.getElementById(id); };
@@ -17,6 +18,8 @@
   var toastTimer;
   var previousFocus;
   var composing = false;
+  var currentView = "agents";
+  var closeTimer;
   var scenes = window.marketplaceScenes || [];
   // 只模拟本页扣点：50 点、每次发送 10 点，刷新或重置后恢复；不产生真实 Token 用量。
   var previewQuota = { total: 50, remaining: new URLSearchParams(window.location.search).get("quota") === "empty" ? 0 : 50, perMessage: 10 };
@@ -77,7 +80,7 @@
   }
 
   function updateSend() {
-    $("drawer-send").disabled = previewQuota.remaining <= 0 || (!input.value.trim() && pendingFiles.length === 0);
+    $("drawer-send").disabled = Boolean(active && active.published === false) || previewQuota.remaining <= 0 || (!input.value.trim() && pendingFiles.length === 0);
   }
 
   function renderQuota() {
@@ -178,6 +181,9 @@
   function openEmployee(employeeId, sceneId, conversationId, forceNew) {
     var employee = byId.get(employeeId);
     if (!employee) { toast("没有找到这位员工，请重新选择。"); return; }
+    if (employee.published === false && (!conversationId || forceNew)) { toast("这位员工已下架，可以从工作台查看已有对话。"); return; }
+    window.clearTimeout(closeTimer);
+    drawer.classList.remove("is-closing");
     if (drawer.open && !saveDraft()) return;
     var scene = scenes.find(function (item) { return item.id === sceneId; }) || null;
     var next = null;
@@ -201,11 +207,14 @@
     $("drawer-title").textContent = employee.name;
     $("drawer-mark").textContent = employee.name.slice(0, 1);
     $("drawer-subtitle").textContent = scene ? scene.name : employee.description;
+    input.disabled = employee.published === false;
+    $("drawer-new").disabled = employee.published === false;
+    $("drawer-attach").disabled = employee.published === false;
     $("drawer-intro").textContent = "你好，我是" + employee.name + "。" + (scene ? "我们可以从“" + scene.name + "”开始。" : "把需要完成的工作告诉我。" );
     $("drawer-capabilities").replaceChildren();
     employee.deliverables.forEach(function (item) { $("drawer-capabilities").appendChild(node("p", "", item)); });
     $("drawer-prompts").replaceChildren();
-    var prompts = scene ? ["我想开始“" + scene.name + "”，请先帮我整理需要准备的信息。"] : ["我想请你帮我处理" + employee.deliverables[0] + "，需要先准备哪些资料？", "先了解你能帮我做什么。"];
+    var prompts = scene ? ["我想开始“" + scene.name + "”，请先帮我整理需要准备的信息。"] : ["我想请你帮我处理" + (employee.deliverables[0] || employee.description || employee.name) + "，需要先准备哪些资料？", "先了解你能帮我做什么。"];
     prompts.forEach(function (prompt) {
       var button = node("button", "prompt-chip", prompt);
       button.type = "button";
@@ -214,6 +223,7 @@
     });
     $("drawer-status").classList.remove("is-error");
     $("drawer-status").textContent = next && next.isExample ? "示例对话 · 新输入仅保存在本机" : "当前消息保存在本机，数字员工尚未连接。";
+    if (employee.published === false) $("drawer-status").textContent = "这位员工已下架，已有对话仍可查看。";
     hideRecharge(false);
     renderQuota();
     renderPending();
@@ -231,13 +241,40 @@
   function closeDrawer() {
     if (!saveDraft()) return;
     remember();
-    drawer.close();
+    if (typeof window.matchMedia !== "function" || window.matchMedia("(prefers-reduced-motion: reduce)").matches) { drawer.close(); return; }
+    drawer.classList.add("is-closing");
+    window.clearTimeout(closeTimer);
+    closeTimer = window.setTimeout(function () { drawer.classList.remove("is-closing"); drawer.close(); }, 180);
+  }
+
+  function refreshOperations() {
+    if (!operations) return;
+    try {
+      catalog = operations.getEmployees().map(function (employee) {
+        var item = Object.assign({}, employee);
+        if (item.image) item.image = operations.assetUrl(item.image);
+        return item;
+      });
+      byId = new Map(catalog.map(function (employee) { return [employee.id, employee]; }));
+      window.marketplaceCatalog = catalog;
+      if (active && byId.has(active.id)) {
+        active = byId.get(active.id);
+        $("drawer-title").textContent = active.name;
+        $("drawer-mark").textContent = active.name.slice(0, 1);
+        $("drawer-subtitle").textContent = activeScene ? activeScene.name : active.description;
+        input.disabled = active.published === false;
+        $("drawer-new").disabled = active.published === false;
+        $("drawer-attach").disabled = active.published === false;
+        if (active.published === false) $("drawer-status").textContent = "这位员工已下架，已有对话仍可查看。";
+        updateSend();
+      }
+    } catch (error) { toast(error.message || "运营配置暂时无法读取，已保留当前页面。"); }
   }
 
   function renderCatalog() {
     var query = $("role-search").value.trim().toLocaleLowerCase("zh-CN");
     var employees = catalog.filter(function (employee) {
-      return (category === "推荐" || employee.category === category) &&
+      return employee.published !== false && (category === "推荐" || employee.category === category) &&
         [employee.name, employee.category, employee.description].join(" ").toLocaleLowerCase("zh-CN").includes(query);
     });
     $("role-grid").replaceChildren();
@@ -258,12 +295,15 @@
       var copy = node("div", "role-info");
       var title = node("button", "role-title", employee.name);
       title.type = "button";
-      copy.appendChild(title);
+      var heading = node("div", "role-heading");
+      heading.appendChild(title);
+      heading.appendChild(node("span", "role-category", employee.category));
+      copy.appendChild(heading);
       copy.appendChild(node("p", "role-description", employee.description));
-      copy.appendChild(node("p", "role-allowance", "免费额度开用 · 平台额度通用"));
       var actions = node("div", "role-actions");
       var trial = node("button", "button button-primary", "开始使用");
       trial.type = "button";
+      trial.appendChild(node("span", "role-action-arrow", "↗"));
       actions.appendChild(trial);
       copy.appendChild(actions);
       card.appendChild(copy);
@@ -281,7 +321,8 @@
   function renderScenes() {
     var query = $("scene-search") ? $("scene-search").value.trim().toLocaleLowerCase("zh-CN") : "";
     var visible = scenes.filter(function (scene) {
-      return (sceneCategory === "all" || scene.category === sceneCategory) &&
+      var employee = byId.get(scene.employee);
+      return employee && employee.published !== false && (sceneCategory === "all" || scene.category === sceneCategory) &&
         [scene.name, scene.description].join(" ").toLocaleLowerCase("zh-CN").includes(query);
     });
     $("scene-grid").replaceChildren();
@@ -382,6 +423,7 @@
 
   function showView(view) {
     if (!["agents", "scenes", "workspace"].includes(view)) return;
+    currentView = view;
     $("marketplace-tabs").hidden = view === "workspace";
     $("workspace-heading").hidden = view !== "workspace";
     if (view !== "workspace") lastMarketView = view;
@@ -404,6 +446,7 @@
     url.searchParams.set("view", view);
     window.history.replaceState(null, "", url);
     if (view === "workspace") renderWorkspace();
+    if (window.MarketplaceBanner) window.MarketplaceBanner.setView(view);
   }
 
   $("marketplace-tabs").addEventListener("keydown", function (event) {
@@ -458,6 +501,8 @@
     closeDrawer();
   });
   drawer.addEventListener("close", function () {
+    window.clearTimeout(closeTimer);
+    drawer.classList.remove("is-closing");
     document.body.classList.remove("drawer-open");
     updateRoute();
     renderWorkspace();
@@ -487,6 +532,7 @@
   });
   $("drawer-form").addEventListener("submit", function (event) {
     event.preventDefault();
+    if (active && active.published === false) { toast("这位员工已下架，暂时不能发起新的工作。"); return; }
     if (previewQuota.remaining <= 0) { showRecharge(); return; }
     if (!active || (!input.value.trim() && pendingFiles.length === 0) || !saveDraft()) return;
     try {
@@ -511,6 +557,15 @@
     if (!$("view-workspace").hidden) renderWorkspace();
   });
 
+  refreshOperations();
+  if (operations) operations.subscribe(function (event) {
+    if (event && event.type === "error") { toast(event.error && event.error.message || "运营配置暂时无法读取。"); return; }
+    refreshOperations();
+    renderCatalog();
+    renderScenes();
+    renderWorkspace();
+  });
+  window.EmbeddedMarketplace = { openEmployee: openEmployee, showView: showView, getView: function () { return currentView; } };
   renderCatalog();
   renderScenes();
   renderWorkspace();

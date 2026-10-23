@@ -13,8 +13,9 @@
   var conversation = null;
   var pendingFiles = [];
   var savedViews = new Map();
-  var category = "推荐";
-  var sceneCategory = "all";
+  var route = new URLSearchParams(window.location.search);
+  var category = route.get("category") || "";
+  var sceneCategory = route.get("sceneCategory") === "sales" ? "sales" : "all";
   var toastTimer;
   var previousFocus;
   var composing = false;
@@ -284,9 +285,10 @@
   }
 
   function renderCatalog() {
+    renderCategoryFilters();
     var query = $("role-search").value.trim().toLocaleLowerCase("zh-CN");
     var employees = catalog.filter(function (employee) {
-      return employee.published !== false && (category === "推荐" || employee.category === category) &&
+      return employee.published !== false && (!category || employeeCategory(employee) === category) &&
         [employee.name, employee.category, employee.description].join(" ").toLocaleLowerCase("zh-CN").includes(query);
     });
     $("role-grid").replaceChildren();
@@ -344,6 +346,60 @@
     });
   }
 
+  function employeeCategory(employee) {
+    return typeof employee.category === "string" && employee.category.trim() ? employee.category.trim() : "其他";
+  }
+
+  function syncCategoryRoute() {
+    var url = new URL(window.location.href);
+    if (category) url.searchParams.set("category", category);
+    else url.searchParams.delete("category");
+    if (sceneCategory !== "all") url.searchParams.set("sceneCategory", sceneCategory);
+    else url.searchParams.delete("sceneCategory");
+    window.history.replaceState(null, "", url);
+  }
+
+  function renderCategoryFilters() {
+    var published = catalog.filter(function (employee) { return employee.published !== false; });
+    var counts = new Map();
+    published.forEach(function (employee) {
+      var name = employeeCategory(employee);
+      counts.set(name, (counts.get(name) || 0) + 1);
+    });
+    var order = ["内容创作", "设计", "财税", "资质", "法务", "开发", "翻译", "营销", "数据", "客服"];
+    var names = order.filter(function (name) { return counts.has(name); });
+    names = names.concat(Array.from(counts.keys()).filter(function (name) { return !order.includes(name); }).sort(function (a, b) { return a.localeCompare(b, "zh-CN"); }));
+    if (category && !counts.has(category)) category = "";
+    var items = [{ value: "", label: "推荐", count: published.length }].concat(names.map(function (name) {
+      return { value: name, label: name === "推荐" ? "推荐分类" : name, count: counts.get(name) };
+    }));
+    var container = $("category-filters");
+    var signature = JSON.stringify(items);
+    if (container.dataset.signature !== signature) {
+      var focused = container.contains(document.activeElement) ? document.activeElement.dataset.category : null;
+      var scrollLeft = container.scrollLeft;
+      container.replaceChildren();
+      items.forEach(function (item) {
+        var button = node("button", "category-chip");
+        button.type = "button";
+        button.dataset.category = item.value;
+        button.appendChild(node("span", "category-name", item.label));
+        var count = node("span", "category-count", item.count);
+        count.setAttribute("aria-hidden", "true");
+        button.appendChild(count);
+        button.setAttribute("aria-label", item.label + "，" + item.count + " 位员工");
+        container.appendChild(button);
+      });
+      container.dataset.signature = signature;
+      container.scrollLeft = scrollLeft;
+      if (focused !== null) {
+        var nextFocus = Array.from(container.querySelectorAll("button")).find(function (button) { return button.dataset.category === focused; }) || container.querySelector("button");
+        nextFocus.focus({ preventScroll: true });
+      }
+    }
+    syncCategoryRoute();
+  }
+
   function renderScenes() {
     var query = $("scene-search") ? $("scene-search").value.trim().toLocaleLowerCase("zh-CN") : "";
     var visible = scenes.filter(function (scene) {
@@ -381,7 +437,21 @@
       var selected = button.dataset.sceneCategory === sceneCategory;
       button.classList.toggle("is-active", selected);
       button.setAttribute("aria-pressed", String(selected));
+      var count = button.querySelector(".category-count");
+      if (!count) {
+        button.dataset.label = button.textContent;
+        count = node("span", "category-count");
+        count.setAttribute("aria-hidden", "true");
+        button.appendChild(count);
+      }
+      var total = scenes.filter(function (scene) {
+        var employee = byId.get(scene.employee);
+        return employee && employee.published !== false && (button.dataset.sceneCategory === "all" || scene.category === button.dataset.sceneCategory);
+      }).length;
+      count.textContent = total;
+      button.setAttribute("aria-label", button.dataset.label + "，" + total + " 个场景");
     });
+    syncCategoryRoute();
   }
 
   function employeeIcon(employeeId) {
@@ -486,13 +556,6 @@
     index = event.key === "Home" ? 0 : event.key === "End" ? tabs.length - 1 : (index + (event.key === "ArrowRight" ? 1 : -1) + tabs.length) % tabs.length;
     showView(tabs[index].dataset.view);
     tabs[index].focus();
-  });
-
-  ["推荐", "内容创作", "设计", "财税", "法务", "开发", "翻译", "营销", "数据", "客服"].forEach(function (name) {
-    var button = node("button", "category-chip", name);
-    button.type = "button";
-    button.dataset.category = name;
-    $("category-filters").appendChild(button);
   });
 
   document.addEventListener("click", function (event) {
@@ -606,7 +669,6 @@
   renderCatalog();
   renderScenes();
   renderWorkspace();
-  var route = new URLSearchParams(window.location.search);
   showView(route.get("view") || "agents");
   if (route.get("employee")) openEmployee(route.get("employee"), route.get("scene"), route.get("conversation"));
 })();

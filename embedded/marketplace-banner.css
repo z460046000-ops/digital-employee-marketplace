@@ -21,7 +21,7 @@
 .banner-counter { font-family:"D-DIN","DIN Alternate",sans-serif; font-size:12px; color:#626976; white-space:nowrap; font-variant-numeric:tabular-nums; }
 #banner-pause { display:grid; place-items:center; width:28px; height:28px; padding:0; border:0; background:none; color:#626976; border-radius:50%; font-size:12px; }
 .host-main .role-grid { grid-template-columns:repeat(3,minmax(0,1fr));gap:24px;align-items:stretch; }
-.host-main .role-card { display:grid;grid-template-columns:64px minmax(0,1fr);grid-template-rows:64px minmax(0,1fr) 40px;gap:18px 16px;height:244px;min-height:0;padding:23px;border-radius:16px;border:1px solid #e6e9ee;background:#fff;animation:market-card-in .4s cubic-bezier(.22,1,.36,1) backwards; }
+.host-main .role-card { display:grid;grid-template-columns:64px minmax(0,1fr);grid-template-rows:64px auto minmax(0,1fr) auto 40px;gap:14px 16px;height:auto;min-height:360px;padding:23px;border-radius:16px;border:1px solid #e6e9ee;background:#fff;animation:market-card-in .4s cubic-bezier(.22,1,.36,1) backwards; }
 .host-main .role-cover { display:block;grid-column:1;grid-row:1;width:64px;height:64px;aspect-ratio:1;max-height:64px;border-radius:12px; }
 .host-main .role-cover img { display:block;object-fit:cover;transition:transform .35s cubic-bezier(.22,1,.36,1); }
 .host-main .role-info { display:contents;padding:0; }
@@ -29,7 +29,14 @@
 .host-main .role-title { max-width:100%;font-size:17px;font-weight:500;line-height:1.6;letter-spacing:-.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
 .host-main .role-category { padding:0;color:#7c828c;background:none;border-radius:0;font-size:12px;line-height:1.6;white-space:nowrap; }
 .host-main .role-description { grid-column:1/-1;grid-row:2;align-self:start;font-size:13px;line-height:1.8;margin:0;min-height:0;color:#787f8c;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;max-height:3.6em;overflow:hidden; }
-.host-main .role-actions { grid-column:1/-1;grid-row:3;margin:0; }
+.host-main .role-delivery { grid-column:1/-1;grid-row:3;min-width:0; }
+.host-main .role-delivery-label { margin:0 0 8px;color:#8a929e;font-size:11px;line-height:1.6; }
+.host-main .role-deliverables { display:flex;flex-wrap:wrap;align-content:flex-start;gap:6px;list-style:none;padding:0;margin:0; }
+.host-main .role-deliverable { max-width:100%;padding:4px 8px;border:1px solid #e9ecf1;border-radius:6px;background:#f8f9fb;color:#5e6877;font-size:11px;line-height:1.6;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
+.host-main .role-preparation { grid-column:1/-1;grid-row:4;margin:0;color:#7e8795;font-size:11px;line-height:1.8; }
+.host-main .role-preparation-label { color:#929aa6;margin-right:9px; }
+.host-main .role-preparation-text { color:#647080; }
+.host-main .role-actions { grid-column:1/-1;grid-row:5;margin:0; }
 .host-main .role-actions .button { display:flex;align-items:center;justify-content:space-between;padding:10px 15px;min-height:40px;font-size:12px;border-radius:8px;font-weight:500; }
 .host-main .role-action-arrow { font-size:17px;line-height:1;font-weight:400; }
 .host-main .scenario-card-cover { aspect-ratio:16/9; }

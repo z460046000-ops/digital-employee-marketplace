@@ -11,14 +11,14 @@
   <link rel="stylesheet" href="legacy-market.css?v=2a36075b56">
   <link rel="stylesheet" href="legacy-scenes.css?v=3007a1046d">
   <link rel="stylesheet" href="embedded-layout.css?v=3992768c6e">
-  <link rel="stylesheet" href="marketplace-banner.css?v=bfe822922b">
-  <link rel="stylesheet" href="drawer-ui.css?v=4a67f6ca66">
+  <link rel="stylesheet" href="marketplace-banner.css?v=5336b8f6f9">
+  <link rel="stylesheet" href="drawer-ui.css?v=45f04a5665">
   <script src="catalog.js?v=9ac908d0ac" defer></script>
   <script src="../admin/ops-store.js?v=f1a9fa2be6" defer></script>
   <script src="workspace-examples.js?v=a9755461c5" defer></script>
   <script src="embedded-store.js?v=a1d183c111" defer></script>
   <script src="scene-catalog.js?v=b0f39a9445" defer></script>
-  <script src="embedded.js?v=e6699742dd" defer></script>
+  <script src="embedded.js?v=1fedc15f5f" defer></script>
   <script src="marketplace-banner.js?v=5975ab8f99" defer></script>
 </head>
 <body>
@@ -92,7 +92,13 @@
       <span id="drawer-status" class="drawer-status" role="status" aria-live="polite"></span>
     </form>
   </dialog>
-  <dialog id="recharge-panel" class="recharge-panel workspace-dialog" aria-labelledby="recharge-title" aria-describedby="recharge-copy"><div class="recharge-heading"><span class="workspace-dialog-label">WORKSPACE</span><button id="recharge-close" type="button" class="icon-button" aria-label="关闭额度提示"><span aria-hidden="true">×</span></button></div><h3 id="recharge-title">前往 Workspace，继续这项工作</h3><p id="recharge-copy">体验额度已用完，可前往 Workspace 继续使用。</p><div class="workspace-dialog-actions"><button id="recharge-back" class="credit-button" type="button">返回对话</button><a class="workspace-link" href="https://z460046000-ops.github.io/digital-employee-marketplace/" target="_blank" rel="noopener">前往 Workspace <span aria-hidden="true">↗</span></a></div></dialog>
+  <dialog id="recharge-panel" class="recharge-panel workspace-dialog" aria-labelledby="recharge-title" aria-describedby="recharge-copy"><div class="recharge-heading"><span class="workspace-dialog-label">WORKSPACE</span><button id="recharge-close" type="button" class="icon-button" aria-label="关闭额度提示"><span aria-hidden="true">×</span></button></div><h3 id="recharge-title">前往 Workspace，继续这项工作</h3><p id="recharge-copy">体验额度已用完，可前往 Workspace 继续使用。</p>
+    <ul class="workspace-benefits" aria-label="Workspace 使用优势">
+      <li><span class="workspace-benefit-index" aria-hidden="true">01</span><div><h4>功能更齐全</h4><p>在完整工作空间中发起任务、管理资料，查看工作结果。</p></div></li>
+      <li><span class="workspace-benefit-index" aria-hidden="true">02</span><div><h4>持续使用更稳定</h4><p>更适合连续处理工作，减少反复切换与体验中断。</p></div></li>
+      <li><span class="workspace-benefit-index" aria-hidden="true">03</span><div><h4>记录集中管理</h4><p>统一查看历史对话和用量，找到需要继续跟进的工作。</p></div></li>
+    </ul>
+    <div class="workspace-dialog-actions"><button id="recharge-back" class="credit-button" type="button">返回对话</button><a class="workspace-link" href="https://z460046000-ops.github.io/digital-employee-marketplace/" target="_blank" rel="noopener">前往 Workspace <span aria-hidden="true">↗</span></a></div></dialog>
   <div id="toast" class="toast" role="status" hidden></div>
 </body>
 </html>

@@ -289,6 +289,12 @@
       return employee.published !== false && (category === "推荐" || employee.category === category) &&
         [employee.name, employee.category, employee.description].join(" ").toLocaleLowerCase("zh-CN").includes(query);
     });
+    var preparation = {
+      content: "主题 / 受众 / 发布渠道", design: "用途 / 尺寸 / 参考风格",
+      finance: "业务记录 / 票据 / 报表", qualification: "企业信息 / 申报事项",
+      legal: "政策原文 / 关注问题", development: "功能需求 / 接口资料",
+      translation: "原文 / 目标语言 / 用途", live: "产品资料 / 直播主题"
+    };
     $("role-grid").replaceChildren();
     employees.forEach(function (employee) {
       var card = node("article", "role-card");
@@ -313,6 +319,23 @@
       if (employee.category !== employee.name) heading.appendChild(node("span", "role-category", employee.category));
       copy.appendChild(heading);
       copy.appendChild(node("p", "role-description", employee.description));
+      var deliverables = (Array.isArray(employee.deliverables) ? employee.deliverables : []).filter(function (item) {
+        return typeof item === "string" && item.trim();
+      }).slice(0, 2);
+      var delivery = node("div", "role-delivery");
+      delivery.appendChild(node("p", "role-delivery-label", "可交付"));
+      var deliverableList = node("ul", "role-deliverables");
+      (deliverables.length ? deliverables : ["在对话中确认交付内容"]).forEach(function (item) {
+        var tag = node("li", "role-deliverable", item);
+        tag.setAttribute("title", item);
+        deliverableList.appendChild(tag);
+      });
+      delivery.appendChild(deliverableList);
+      copy.appendChild(delivery);
+      var preparationLine = node("p", "role-preparation");
+      preparationLine.appendChild(node("span", "role-preparation-label", "开始前准备"));
+      preparationLine.appendChild(node("span", "role-preparation-text", preparation[employee.id] || "工作目标与已有资料"));
+      copy.appendChild(preparationLine);
       var actions = node("div", "role-actions");
       var trial = node("button", "button button-primary", "开始使用");
       trial.type = "button";

@@ -10,22 +10,22 @@
   <link rel="stylesheet" href="embedded.css?v=64100b362d">
   <link rel="stylesheet" href="legacy-market.css?v=2a36075b56">
   <link rel="stylesheet" href="legacy-scenes.css?v=3007a1046d">
-  <link rel="stylesheet" href="embedded-layout.css?v=3992768c6e">
-  <link rel="stylesheet" href="marketplace-banner.css?v=5336b8f6f9">
+  <link rel="stylesheet" href="embedded-layout.css?v=1216d5486a">
+  <link rel="stylesheet" href="marketplace-banner.css?v=189e5893d1">
   <link rel="stylesheet" href="drawer-ui.css?v=45f04a5665">
   <script src="catalog.js?v=9ac908d0ac" defer></script>
   <script src="../admin/ops-store.js?v=f1a9fa2be6" defer></script>
   <script src="workspace-examples.js?v=a9755461c5" defer></script>
   <script src="embedded-store.js?v=a1d183c111" defer></script>
   <script src="scene-catalog.js?v=b0f39a9445" defer></script>
-  <script src="embedded.js?v=1fedc15f5f" defer></script>
+  <script src="embedded.js?v=1bc5bef67a" defer></script>
   <script src="marketplace-banner.js?v=5975ab8f99" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#marketplace-main">跳转到智能体集市</a>
   <header class="host-header">
     <div class="host-brand"><img src="assets/wdsheng/platform-logo.svg" width="137" height="56" alt="万大圣"></div>
-    <div class="host-account"><span class="account-avatar" aria-hidden="true">企</span><span>雇主</span></div>
+    <div class="host-account"><button type="button" data-view="workspace" aria-controls="view-workspace" aria-pressed="false">我的工作台</button><span class="account-avatar" aria-hidden="true">企</span><span>雇主</span></div>
   </header>
 
   <aside class="host-sidebar" aria-label="万大圣导航">
@@ -40,7 +40,7 @@
     <div class="host-categories" aria-label="服务分类"><span>知识产权</span><span>营销推广</span><span>人力资源服务</span><span>软件与信息化</span><span>品牌与设计</span><span>AI 与数据智能</span><span>工商财税</span><span>企业综合服务</span><span>法律服务</span><span>跨境企服</span></div>
     <div class="host-sidebar-bottom"><span>我的</span><small>通知消息</small></div>
     </div>
-    <div class="host-sidebar-footer"><button class="workspace-entry" type="button" data-view="workspace" aria-controls="view-workspace" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="15" rx="3"></rect><path d="M8 5V3h8v2M3 11h18M10 11v3h4v-3"></path></svg><span>我的工作台</span><span class="sidebar-entry-arrow" aria-hidden="true">↗</span></button></div>
+    <div class="host-sidebar-footer"><a class="workspace-entry" href="../admin/"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="3"></rect><path d="M9 4v16M13 9h4M13 13h4"></path></svg><span>进入后台</span><span class="sidebar-entry-arrow" aria-hidden="true">→</span></a></div>
   </aside>
 
   <main class="marketplace-main host-main" id="marketplace-main">

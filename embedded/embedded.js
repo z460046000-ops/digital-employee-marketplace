@@ -289,12 +289,6 @@
       return employee.published !== false && (category === "推荐" || employee.category === category) &&
         [employee.name, employee.category, employee.description].join(" ").toLocaleLowerCase("zh-CN").includes(query);
     });
-    var preparation = {
-      content: "主题 / 受众 / 发布渠道", design: "用途 / 尺寸 / 参考风格",
-      finance: "业务记录 / 票据 / 报表", qualification: "企业信息 / 申报事项",
-      legal: "政策原文 / 关注问题", development: "功能需求 / 接口资料",
-      translation: "原文 / 目标语言 / 用途", live: "产品资料 / 直播主题"
-    };
     $("role-grid").replaceChildren();
     employees.forEach(function (employee) {
       var card = node("article", "role-card");
@@ -332,10 +326,6 @@
       });
       delivery.appendChild(deliverableList);
       copy.appendChild(delivery);
-      var preparationLine = node("p", "role-preparation");
-      preparationLine.appendChild(node("span", "role-preparation-label", "开始前准备"));
-      preparationLine.appendChild(node("span", "role-preparation-text", preparation[employee.id] || "工作目标与已有资料"));
-      copy.appendChild(preparationLine);
       var actions = node("div", "role-actions");
       var trial = node("button", "button button-primary", "开始使用");
       trial.type = "button";

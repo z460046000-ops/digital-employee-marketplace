@@ -55,9 +55,10 @@
 .host-sidebar { display: flex; flex-direction: column; overflow: hidden; padding-bottom: 18px; }
 .host-sidebar-content { flex: 1; min-height: 0; overflow-y: auto; scrollbar-width: thin; scrollbar-color: #d9d5e8 transparent; }
 .host-sidebar-footer { flex: none; padding-top: 12px; margin-top: 12px; border-top: 1px solid #eeedf2; background: #fff; }
-.workspace-entry { display: flex; align-items: center; gap: 11px; width: 100%; min-height: 44px; padding: 11px 14px; border: 0; border-radius: 9px; background: transparent; color: #626976; font-size: 13px; text-align: left; transition: background .18s, color .18s; }
+.workspace-entry { display: flex; align-items: center; gap: 11px; width: 100%; min-height: 44px; padding: 11px 14px; border: 0; border-radius: 9px; background: transparent; color: #626976; font-size: 13px; text-align: left; text-decoration: none; transition: background .18s, color .18s; }
 .workspace-entry svg { width: 19px; height: 19px; flex: none; }
 .workspace-entry.is-active { color: var(--brand); background: var(--brand-light); }
+.host-account button[aria-pressed="true"] { color: var(--brand); background: var(--brand-light); }
 .sidebar-entry-arrow { margin-left: auto; font-size: 16px; }
 @media (hover: hover) and (pointer: fine) { .workspace-entry:not(.is-active):hover { background: #f6f5fa; color: #202127; } }
 @media (max-width: 700px) {
